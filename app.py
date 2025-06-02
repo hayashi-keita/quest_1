@@ -1,0 +1,34 @@
+# venv\Scripts\activate
+from flask import Flask, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from models import User, db  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
+from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
+from routes.record import record
+
+app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
+app.config['SECRET_KEY'] = 'your-secret-key'  # フォームなどのセキュリティー用のキー
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///team_data.db'  # データベースの保存場所を指定
+db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
+LoginManager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
+LoginManager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
+
+@LoginManager.user_loader  # Flask-Loginが「今ログインしている人」を取得する方法を定義
+def load_user(user_id):
+    return User.query.get(int(user_id))  # データベースから user_id に一致するユーザーを探して返す
+
+# Blueprint の登録
+app.register_blueprint(auth)  # Flask アプリにルートを登録（登録しないと /login などが使えない）
+app.register_blueprint(record)
+
+# テーブル作成
+with app.app_context():
+    db.create_all()
+
+# トップページにアクセスされたとき、自動的にログインページにリダイレクトする関数
+@app.route('/')
+def index():
+    return redirect(url_for('auth.login'))
+
+if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
+    app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される

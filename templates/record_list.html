@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>自分の記録一覧</h2>
+  {% if records %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>50m</th>
+          <th>ベースラン</th>
+          <th>遠投</th>
+          <th>球速</th>
+          <th>打球</th>
+          <th>スイング</th>
+          <th>ベンチ</th>
+          <th>スクワット</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.date }}</td>
+          <td>{{ record.run_50m }}</td>
+          <td>{{ record.base_running }}</td>
+          <td>{{ record.long_throw }}</td>
+          <td>{{ record.pitch_speed }}</td>
+          <td>{{ record.hit_speed }}</td>
+          <td>{{ record.swing_speed }}</td>
+          <td>{{ record.bench_press }}</td>
+          <td>{{ record.squat }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>記録がありません。</p>
+  {% endif %}
+{% endblock %}
