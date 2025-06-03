@@ -2,7 +2,7 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from models import User, Record, db  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
+from models import User, db  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
 from flask_migrate import Migrate
@@ -11,7 +11,7 @@ app = Flask(__name__)  # __name__はこのファイルが実行されるとき�
 app.config['SECRET_KEY'] = 'your-secret-key'  # フォームなどのセキュリティー用のキー
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///team_data.db'  # データベースの保存場所を指定
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
-migrate = Migrate(app, db)
+migrate = Migrate()
 LoginManager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
 LoginManager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
 

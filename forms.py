@@ -21,4 +21,4 @@ class RecordForm(FlaskForm):
     swing_speed = FloatField('スイング速度 [km/h]', validators=[DataRequired()])
     bench_press = FloatField('ベンチプレス [kg]', validators=[DataRequired()])
     squat = FloatField('スクワット [kg]', validators=[DataRequired()])
-    submit = SubmitField('記録を更新！')
+    submit = SubmitField('記録を更新')

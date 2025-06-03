@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>コーチによる最終承認</h2>
+  <table class="table table-bordered mt-4">
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>部員</th>
+        <th>50m走</th>
+        <th>遠投</th>
+        <th>スイング</th>
+        <th>承認</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+        <tr>
+          <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+          <td>{{ users[record.user_id] }}</td>
+          <td>{{ record.run_50m }}</td>
+          <td>{{ record.long_throw }}</td>
+          <td>{{ record.swing_speed }}</td>
+          <td>
+            {% if record.member_approval and not record.coach_approval %}
+            <form method="post" action="{{ url_for('record.approve_by_coach', record_id=record.id) }}">
+              <button type="submit" class="btn btn-success btn-sm">最終承認</button>
+            </form>
+            {% else %}
+              <span class="text-success">承認済</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

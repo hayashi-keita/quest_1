@@ -9,10 +9,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)  # ユーザー名、重複を許さない、空も不可
     password = db.Column(db.String(150), nullable=False)  # パスワード、空は不可
     role = db.Column(db.String(50), default='member')
+    records = db.relationship('Record', backref='user', lazy=True)
 
 class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, default=datetime.now)
     run_50m = db.Column(db.Float)
     base_running = db.Column(db.Float)
@@ -22,3 +23,6 @@ class Record(db.Model):
     swing_speed = db.Column(db.Float)
     bench_press = db.Column(db.Float)
     squat = db.Column(db.Float)
+    # 承認フラグ
+    member_approval = db.Column(db.Boolean, default=False)
+    coach_approval = db.Column(db.Boolean, default=False)

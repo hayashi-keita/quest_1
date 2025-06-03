@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>あなたの記録（承認待ち）</h2>
+  {% if records %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>50m走</th>
+          <th>ベースラン</th>
+          <th>遠投</th>
+          <th>ピッチ</th>
+          <th>打球</th>
+          <th>スイング</th>
+          <th>ベンチ</th>
+          <th>スクワット</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ record.run_50m }}</td>
+            <td>{{ record.base_running }}</td>
+            <td>{{ record.long_throw }}</td>
+            <td>{{ record.pitch_speed }}</td>
+            <td>{{ record.hit_speed }}</td>
+            <td>{{ record.swing_speed }}</td>
+            <td>{{ record.bench_press }}</td>
+            <td>{{ record.squat }}</td>
+            <td>
+              {% if not record.member_approval %}
+              <form method="post" action="{{ url_for('record.approve_by_member', record_id=record.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">承認</button>
+              </form>
+              {% else %}
+                <span class="text-success">承認済</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>承認待ちの記録はありません。</p>
+  {% endif %}
+</div>
+{% endblock %}

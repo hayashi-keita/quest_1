@@ -1,0 +1,27 @@
+<!-- templates/all_records.html -->
+{% extends "layout.html" %}
+{% block content %}
+  <h2>全員の記録一覧</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ユーザー名</th>
+        <th>日付</th>
+        <th>記録1</th>
+        <th>記録2</th>
+        <th>記録3</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+        <tr>
+          <td>{{ users[record.user_id] }}</td>
+          <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+          <td>{{ record.measurement1 }}</td>
+          <td>{{ record.measurement2 }}</td>
+          <td>{{ record.measurement3 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
