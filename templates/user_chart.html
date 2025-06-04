@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>{{ user.name }}さんの{{ field_jp }}の推移</h2>
+
+<!-- グラフ画像 -->
+<img src="data:image/png;base64,{{ graph_url }}" class="img-fluid mb-3">
+
+<!-- 他の項目へ切り替えリンク -->
+<div class="mb-3">
+  <p><strong>他の項目を見る:</strong></p>
+  <ul class="list-inline">
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='hit_speed') }}">打球速度</a></li>
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='pitch_speed') }}">投球速度</a></li>
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='swing_speed') }}">スイング速度</a></li>
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='run_50m') }}">50m走</a></li>
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='bench_press') }}">ベンチプレス</a></li>
+    <li class="list-inline-item"><a href="{{ url_for('record.user_chart', user_id=user.id, field='squat') }}">スクワット</a></li>
+  </ul>
+</div>
+
+<!-- 戻るリンク -->
+<a href="{{ url_for('record.all_records') }}">← 戻る</a>
+
+{% endblock %}

@@ -1,15 +1,64 @@
-<!-- templates/record.html -->
-{% extends "base.html" %}
+{% extends "layout.html" %}
 {% block content %}
 <h2>記録登録</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
-    {% for field in form if field.type != 'CSRFToken' and field.type != 'SubmitField' %}
-        <div class="mb-3">
-            {{ field.label }}<br>
-            {{ field(class="form-control") }}
-        </div>
-    {% endfor %}
-    {{ form.submit(class="btn btn-primary") }}
+    <div class="mb-3">
+        {{ form.month.label(class="form-label") }}
+        {{ form.month(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.grade.label(class="form-label") }}
+        {{ form.grade(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
+    </div>
+
+    <!-- 測定項目 -->
+    <div class="mb-3">
+        {{ form.run_50m.label(class="form-label") }}
+        {{ form.run_50m(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.base_running.label(class="form-label") }}
+        {{ form.base_running(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.long_throw.label(class="form-label") }}
+        {{ form.long_throw(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.pitch_speed.label(class="form-label") }}
+        {{ form.pitch_speed(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.hit_speed.label(class="form-label") }}
+        {{ form.hit_speed(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.swing_speed.label(class="form-label") }}
+        {{ form.swing_speed(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.bench_press.label(class="form-label") }}
+        {{ form.bench_press(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.squat.label(class="form-label") }}
+        {{ form.squat(class="form-control") }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">登録</button>
 </form>
 {% endblock %}

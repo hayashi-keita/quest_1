@@ -19,18 +19,20 @@ def login():
             flash('ユーザー名かパスワードが違います')
     return render_template('login.html', form=form)
 
+# ユーザー登録処理
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
         hash_password = generate_password_hash(form.password.data)
-        user = User(username=form.username.data, password=hash_password)
+        user = User(username=form.username.data, password=hash_password, role=form.role.data)
         db.session.add(user)
         db.session.commit()
         flash('登録が完了しました。ログインしてください。')
         return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
 
+# ログアウト処理
 @auth.route('/logout')
 @login_required  # ログイン済ならアクセス制限
 def logout():

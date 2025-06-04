@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>部員管理</h2>
+
+<!-- 新規部員作成フォーム -->
+<form method="post" class="mb-4">
+  <div class="mb-3">
+    <label for="username" class="form-label">ユーザー名</label>
+    <input type="text" class="form-control" id="username" name="username" placeholder="新しい部員の名前" required>
+  </div>
+  <button type="submit" class="btn btn-primary">部員作成</button>
+</form>
+
+<!-- 部員一覧 -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ユーザー名</th>
+      <th>ステータス</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for member in members %}
+    <tr>
+      <td>{{ member.username }}</td>
+      <td>{{ member.status or '在籍中' }}</td>
+      <td>
+        <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
+          <input type="hidden" name="action" value="retire">
+          <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('退部扱いにしますか？')">退部</button>
+        </form>
+        <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
+          <input type="hidden" name="action" value="leave">
+          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('退会扱いにしますか？')">退会</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3">登録されている部員はありません。</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{{ url_for('index') }}">← トップに戻る</a>
+{% endblock %}

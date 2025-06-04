@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from models import User, Record, db  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
+from routes.user import user
 from flask_migrate import Migrate
 
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
@@ -22,6 +23,7 @@ def load_user(user_id):
 # Blueprint の登録
 app.register_blueprint(auth)  # Flask アプリにルートを登録（登録しないと /login などが使えない）
 app.register_blueprint(record)
+app.register_blueprint(user)
 
 # テーブル作成
 with app.app_context():

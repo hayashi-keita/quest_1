@@ -1,15 +1,23 @@
-<!-- templates/all_records.html -->
 {% extends "layout.html" %}
+
 {% block content %}
   <h2>全員の記録一覧</h2>
-  <table class="table table-striped">
+  <table class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>ユーザー名</th>
         <th>日付</th>
-        <th>記録1</th>
-        <th>記録2</th>
-        <th>記録3</th>
+        <th>記録月</th>
+        <th>学年</th>
+        <th>名前</th>
+        <th>50m走</th>
+        <th>ベースランニング</th>
+        <th>遠投</th>
+        <th>投球速度</th>
+        <th>打球速度</th>
+        <th>スイング速度</th>
+        <th>ベンチプレス</th>
+        <th>スクワット</th>
       </tr>
     </thead>
     <tbody>
@@ -17,9 +25,17 @@
         <tr>
           <td>{{ users[record.user_id] }}</td>
           <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
-          <td>{{ record.measurement1 }}</td>
-          <td>{{ record.measurement2 }}</td>
-          <td>{{ record.measurement3 }}</td>
+          <td>{{ record.month }}</td>
+          <td>{{ record.grade }}</td>
+          <td>{{ record.name }}</td>
+          <td>{{ record.run_50m }}</td>
+          <td>{{ record.base_running }}</td>
+          <td>{{ record.long_throw }}</td>
+          <td>{{ record.pitch_speed }}</td>
+          <td>{{ record.hit_speed }}</td>
+          <td>{{ record.swing_speed }}</td>
+          <td>{{ record.bench_press }}</td>
+          <td>{{ record.squat }}</td>
         </tr>
       {% endfor %}
     </tbody>
