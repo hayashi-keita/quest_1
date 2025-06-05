@@ -9,6 +9,17 @@
     <label for="username" class="form-label">ユーザー名</label>
     <input type="text" class="form-control" id="username" name="username" placeholder="新しい部員の名前" required>
   </div>
+
+  <div class="mb-3">
+    <label for="grade" class="form-label">学年</label>
+    <select class="form-select" id="grade" name="grade" required>
+      <option value="">選択してください</option>
+      <option value="１年">１年</option>
+      <option value="２年">２年</option>
+      <option value="３年">３年</option>
+    </select>
+  </div>
+
   <button type="submit" class="btn btn-primary">部員作成</button>
 </form>
 
@@ -17,6 +28,7 @@
   <thead>
     <tr>
       <th>ユーザー名</th>
+      <th>学年</th>
       <th>ステータス</th>
       <th>操作</th>
     </tr>
@@ -25,6 +37,7 @@
     {% for member in members %}
     <tr>
       <td>{{ member.username }}</td>
+      <td>{{ member.grade }}</td>
       <td>{{ member.status or '在籍中' }}</td>
       <td>
         <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">

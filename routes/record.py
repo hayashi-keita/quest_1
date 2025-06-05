@@ -3,11 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from forms import RecordForm, FilterForm
 from models import db, Record, User
-import matplotlib
-matplotlib.use('Agg')  # GUI描画を無効化（Flaskでは必須）
-import matplotlib.pyplot as plt
-import io
-import base64
+
 
 # 記録画面登録
 record = Blueprint('record', __name__)
@@ -20,8 +16,10 @@ def register_record():
         return redirect(url_for('auth.login'))
 
     form = RecordForm()
+    form.member.choices = [(u.id, u.username) for u in User.query.filter_by(role='member').all()]
+
     if form.validate_on_submit():
-        new_record = Record(user_id=current_user.id,
+        new_record = Record(user_id=form.member.data,
                             date=datetime.now().date(),
                             month = form.month.data,
                             grade = form.grade.data,
@@ -50,14 +48,14 @@ def view_records():
     return render_template('record_list.html', records=records)
 
 # 全部員の記録
-@record.route('/all_records')
+@record.route('/all_records', methods=['GET'])
 @login_required
 def all_records():
     if current_user.role == 'member':
         flash('アクセス権限がありません。', 'danger')
         return redirect(url_for('index'))
 
-    form = FilterForm()
+    form = FilterForm(request.args)
     query = Record.query.join(User)  # データベースからユーザー名を検索し結合
 
     if form.validate_on_submit():
@@ -68,7 +66,7 @@ def all_records():
 
     records = Record.query.order_by(Record.date.desc()).all()
     users = {user.id: user.username for user in User.query.all()}
-    return render_template('all_records.html', records=records, users=users)
+    return render_template('all_records.html', records=records, users=users, form=form)
 
 # 部員の承認ページ
 @record.route('/my_approvals', methods=['GET', 'POST'])
@@ -121,37 +119,3 @@ def approve_by_member(record_id):
     db.session.commit()
     flash('記録を承認しました。', 'success')
     return redirect(url_for('record.my_approvals'))
-
-# グラフ表示処理
-@record.route('/user_chart/<int:user_id>/<string:field>')
-@login_required
-def user_chart(user_id, field):
-    records = Record.query.filter_by(user_id=user_id).order_by(Record.date).all()
-    dates = [r.date.strftime('%Y-%m-%d') for r in records]
-    values = [getattr(r, field) for r in records]
-
-    field_names = {'hit_speed': '打球速度', 'pitch_speed': '投球速度', 'swing_speed': 'スウィング速度',
-                   'run_50m': '50m走', 'bench_press': 'ベンチプレス', 'squat': 'スクワット'}
-    field_jp = field_names.get(field, field)
-
-    plt.rcParams['font.family'] = 'MS Gothic'  # フォント設定 IPAexGothic
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(dates, values, marker='o')
-    plt.title(f'{field_jp}の推移')
-    plt.xlabel('日付')
-    plt.ylabel(field_jp)
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    plt.close()
-    img.seek(0)
-    graph_url = base64.b64encode(img.getvalue()).decode()
-
-    return render_template('user_chart.html', graph_url=graph_url,
-                            user=User.query.get(user_id), field=field, field_jp=field_jp)
-
-
-

@@ -3,6 +3,11 @@
 <h2>記録登録</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.member.label }}<br>
+        {{ form.member(class="form-control") }}
+    </div>
+
     <div class="mb-3">
         {{ form.month.label(class="form-label") }}
         {{ form.month(class="form-control") }}

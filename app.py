@@ -6,6 +6,7 @@ from models import User, Record, db  # ユーザー情報などの「データ�
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
 from routes.user import user
+from routes.dashboard import dashboard
 from flask_migrate import Migrate
 
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
@@ -24,6 +25,7 @@ def load_user(user_id):
 app.register_blueprint(auth)  # Flask アプリにルートを登録（登録しないと /login などが使えない）
 app.register_blueprint(record)
 app.register_blueprint(user)
+app.register_blueprint(dashboard)
 
 # テーブル作成
 with app.app_context():

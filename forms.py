@@ -12,9 +12,11 @@ class RegisterForm(FlaskForm):
     password = PasswordField('パスワード', validators=[DataRequired(), length(min=6)])
     confirm_password = PasswordField('パスワード確認', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('役割', choices=[('member', '部員'), ('manager', 'マネージャー'), ('coach', 'コーチ'), ('admin', '監督')], default='member')
+    grade = SelectField('学年', choices=[('１年', '1'), ('２年', '2'), ('３年', '3'), ('職員', 'teacher')])
     submit = SubmitField('登録')
 
 class RecordForm(FlaskForm):
+    member = SelectField('部員名', coerce=int, validators=[DataRequired()])
     month = StringField('測定月（例：2025-06）', validators=[DataRequired()])
     grade = StringField('学年', validators=[DataRequired()])
     name = StringField('名前', validators=[DataRequired()])
@@ -27,7 +29,6 @@ class RecordForm(FlaskForm):
     bench_press = FloatField('ベンチプレス [kg]', validators=[DataRequired()])
     squat = FloatField('スクワット [kg]', validators=[DataRequired()])
     submit = SubmitField('記録を更新')
-
 
 class FilterForm(FlaskForm):
     grade = SelectField('学年', choices=[('１年', '１年'), ('２年', '２年'), ('３年', '３年')])

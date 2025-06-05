@@ -20,7 +20,7 @@
 
             <!-- 共通機能：グラフ -->
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('record.user_chart', user_id=current_user.id, field='hit_speed') }}">
+              <a class="nav-link" href="{{ url_for('dashboard.my_graph', user_id=current_user.id, field='run_50m') }}">
                 グラフ表示
               </a>
             </li>
@@ -31,7 +31,7 @@
                 <a class="nav-link" href="{{ url_for('record.my_approvals') }}">自分の承認</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('record.records') }}">自分の記録</a>
+                <a class="nav-link" href="{{ url_for('record.view_records') }}">自分の記録</a>
               </li>
             {% endif %}
 

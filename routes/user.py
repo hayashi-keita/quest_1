@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import User, db  
+from models import User, db 
 from functools import wraps
 
 user = Blueprint('user', __name__)
@@ -23,20 +23,23 @@ def manage_members():
     if request.method == 'POST':
         # 新規部員作成処理
         username = request.form.get('username')
+        grade = request.form.get('grade')
         role = 'member'  # 部員はrole=member固定
         # 簡易バリデーション
         if not username:
-            flash('ユーザー名は必須です。' 'warning')
+            flash('ユーザー名は必須です。', 'warning')
+        if not grade:
+            flash('学年入力は必須です。', 'warning')
         else:
             existing = User.query.filter_by(username=username).first()
             if existing:
                 flash('そのユーザー名は既に存在します。' 'warning')
             else:
-                new_user = User(username=username, role=role)
+                new_user = User(username=username, grade=grade, role=role)
                 # 必要ならここでパスワード設定
                 db.session.add(new_user)
                 db.session.commit()
-                flash(f'部員「{username}」を作成しました。', 'success')
+                flash(f'部員「{username}」学年「{grade}」を作成しました。', 'success')
                 return redirect(url_for('user.manage_members'))
 
     # 部員一覧（退部・引退処理用にステータス項目などあれば追加）

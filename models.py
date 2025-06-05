@@ -7,8 +7,9 @@ db = SQLAlchemy()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 各ユーザーの一意のIDを付ける
     username = db.Column(db.String(150), unique=True, nullable=False)  # ユーザー名、重複を許さない、空も不可
-    password = db.Column(db.String(150), nullable=False)  # パスワード、空は不可
+    password = db.Column(db.String(150), nullable=True)  # パスワード、空は不可
     role = db.Column(db.String(50), default='member')
+    grade = db.Column(db.String(10))
     records = db.relationship('Record', backref='user', lazy=True)
 
 class Record(db.Model):

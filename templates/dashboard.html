@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h2 class="mb-4">ダッシュボード - {{ role|capitalize }}</h2>
+
+  {% if role == 'member' %}
+    <h5>最近の記録</h5>
+    <ul class="list-group mb-4">
+      {% for r in records %}
+        <li class="list-group-item">
+          {{ r.date }} | 50m走: {{ r.run_50m }} | スイング速度: {{ r.swing_speed }}
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('dashboard.my_graph') }}" class="btn btn-info">記録のグラフを見る</a>
+
+  {% elif role == 'manager' %}
+    <a href="{{ url_for('record.register_record') }}" class="btn btn-success mb-3">記録を登録する</a>
+
+  {% elif role == 'coach' %}
+    <h5>承認待ちの記録（{{ pending_count }} 件）</h5>
+    <ul class="list-group">
+      {% for r in pending_records %}
+        <li class="list-group-item">
+          {{ r.date }} - {{ r.name }} | 承認済み: {{ r.coach_approval }}
+        </li>
+      {% endfor %}
+    </ul>
+
+  {% elif role == 'admin' %}
+    <h5>記録の承認状況</h5>
+    <p>全体記録数: {{ total_records }}</p>
+    <p>承認済み: {{ approved_records }}</p>
+    <p>承認率: {{ approval_rate }}%</p>
+  {% endif %}
+
+{% endblock %}
