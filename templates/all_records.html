@@ -56,4 +56,6 @@
   </table>
 
   <a href="{{ url_for('dashboard.show_dashboard') }}">ダッシュボード画面</a>
-{% endblock %}
+  <a href="{{ url_for('dashboard.dashboard_summary') }}">全体ダッシュボード画面</a>
+  <a href="{{ url_for('dashboard.ranking') }}">項目別ランキング画面</a>
+  {% endblock %}

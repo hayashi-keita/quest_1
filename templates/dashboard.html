@@ -1,36 +1,131 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h2 class="mb-4">ダッシュボード - {{ role|capitalize }}</h2>
+  <h2 class="mb-4">📊 ダッシュボード</h2>
 
-  {% if role == 'member' %}
-    <h5>最近の記録</h5>
-    <ul class="list-group mb-4">
-      {% for r in records %}
-        <li class="list-group-item">
-          {{ r.date }} | 50m走: {{ r.run_50m }} | スイング速度: {{ r.swing_speed }}
-        </li>
-      {% endfor %}
-    </ul>
-    <a href="{{ url_for('dashboard.my_graph') }}" class="btn btn-info">記録のグラフを見る</a>
+  <h4>🔢 学年別平均値（走力・肩力・打力・筋力）</h4>
 
-  {% elif role == 'manager' %}
-    <a href="{{ url_for('record.register_record') }}" class="btn btn-success mb-3">記録を登録する</a>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <canvas id="chartRun"></canvas>
+    </div>
+    <div class="col-md-6 mb-4">
+      <canvas id="chartShoulder"></canvas>
+    </div>
+    <div class="col-md-6 mb-4">
+      <canvas id="chartBatting"></canvas>
+    </div>
+    <div class="col-md-6 mb-4">
+      <canvas id="chartStrength"></canvas>
+    </div>
+  </div>
 
-  {% elif role == 'coach' %}
-    <h5>承認待ちの記録（{{ pending_count }} 件）</h5>
-    <ul class="list-group">
-      {% for r in pending_records %}
-        <li class="list-group-item">
-          {{ r.date }} - {{ r.name }} | 承認済み: {{ r.coach_approval }}
-        </li>
-      {% endfor %}
-    </ul>
+  <!-- 平均値データを埋め込み -->
+  <script id="json-data" type="application/json">
+    {{ {
+      "grades": grades,
+      "avg_run_50m": avg_run_50m,
+      "avg_base_run": avg_base_run,
+      "avg_long_throw": avg_long_throw,
+      "avg_pitch": avg_pitch,
+      "avg_hit": avg_hit,
+      "avg_swing": avg_swing,
+      "avg_bench": avg_bench,
+      "avg_squat": avg_squat
+    } | tojson | safe }}
+  </script>
 
-  {% elif role == 'admin' %}
-    <h5>記録の承認状況</h5>
-    <p>全体記録数: {{ total_records }}</p>
-    <p>承認済み: {{ approved_records }}</p>
-    <p>承認率: {{ approval_rate }}%</p>
-  {% endif %}
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const data = JSON.parse(document.getElementById("json-data").textContent);
+      const grades = data.grades;
+
+      // 走力
+      new Chart(document.getElementById("chartRun"), {
+        type: "bar",
+        data: {
+          labels: grades,
+          datasets: [
+            {
+              label: "50m走（秒）",
+              data: data.avg_run_50m,
+              backgroundColor: "rgba(255, 99, 132, 0.6)"
+            },
+            {
+              label: "ベースランニング（秒）",
+              data: data.avg_base_run,
+              backgroundColor: "rgba(153, 102, 255, 0.6)"
+            }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+
+      // 肩力
+      new Chart(document.getElementById("chartShoulder"), {
+        type: "bar",
+        data: {
+          labels: grades,
+          datasets: [
+            {
+              label: "遠投（m）",
+              data: data.avg_long_throw,
+              backgroundColor: "rgba(54, 162, 235, 0.6)"
+            },
+            {
+              label: "球速（km/h）",
+              data: data.avg_pitch,
+              backgroundColor: "rgba(255, 159, 64, 0.6)"
+            }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+
+      // 打力
+      new Chart(document.getElementById("chartBatting"), {
+        type: "bar",
+        data: {
+          labels: grades,
+          datasets: [
+            {
+              label: "打球速度（km/h）",
+              data: data.avg_hit,
+              backgroundColor: "rgba(255, 206, 86, 0.6)"
+            },
+            {
+              label: "スイング速度（km/h）",
+              data: data.avg_swing,
+              backgroundColor: "rgba(75, 192, 192, 0.6)"
+            }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+
+      // 筋力
+      new Chart(document.getElementById("chartStrength"), {
+        type: "bar",
+        data: {
+          labels: grades,
+          datasets: [
+            {
+              label: "ベンチプレス（kg）",
+              data: data.avg_bench,
+              backgroundColor: "rgba(100, 100, 255, 0.6)"
+            },
+            {
+              label: "スクワット（kg）",
+              data: data.avg_squat,
+              backgroundColor: "rgba(200, 100, 100, 0.6)"
+            }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+
+    });
+  </script>
 {% endblock %}

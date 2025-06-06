@@ -7,7 +7,12 @@
 <form method="post" class="mb-4">
   <div class="mb-3">
     <label for="username" class="form-label">ユーザー名</label>
-    <input type="text" class="form-control" id="username" name="username" placeholder="新しい部員の名前" required>
+    <input type="text" class="form-control" id="username" name="username" placeholder="新しい部員のユーザー名" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="username" class="form-label">名前</label>
+    <input type="text" class="form-control" id="username" name="name" placeholder="新しい部員の名前" required>
   </div>
 
   <div class="mb-3">
@@ -29,6 +34,7 @@
     <tr>
       <th>ユーザー名</th>
       <th>学年</th>
+      <th>名前</th>
       <th>ステータス</th>
       <th>操作</th>
     </tr>
@@ -38,6 +44,7 @@
     <tr>
       <td>{{ member.username }}</td>
       <td>{{ member.grade }}</td>
+      <td>{{ member.name}}</td>
       <td>{{ member.status or '在籍中' }}</td>
       <td>
         <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">

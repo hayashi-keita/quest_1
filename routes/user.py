@@ -24,18 +24,21 @@ def manage_members():
         # 新規部員作成処理
         username = request.form.get('username')
         grade = request.form.get('grade')
+        name = request.form.get('name')
         role = 'member'  # 部員はrole=member固定
         # 簡易バリデーション
         if not username:
             flash('ユーザー名は必須です。', 'warning')
-        if not grade:
+        elif not grade:
             flash('学年入力は必須です。', 'warning')
+        elif not name:
+            flash('名前入力は必須です', 'warning')
         else:
             existing = User.query.filter_by(username=username).first()
             if existing:
                 flash('そのユーザー名は既に存在します。' 'warning')
             else:
-                new_user = User(username=username, grade=grade, role=role)
+                new_user = User(username=username, grade=grade, name=name, role=role)
                 # 必要ならここでパスワード設定
                 db.session.add(new_user)
                 db.session.commit()

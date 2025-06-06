@@ -25,7 +25,8 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         hash_password = generate_password_hash(form.password.data)
-        user = User(username=form.username.data, password=hash_password, role=form.role.data, grade=form.grade.data)
+        user = User(username=form.username.data, password=hash_password,
+                    role=form.role.data, grade=form.grade.data, name=form.name.data)
         db.session.add(user)
         db.session.commit()
         flash('登録が完了しました。ログインしてください。')

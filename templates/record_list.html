@@ -35,4 +35,8 @@
   {% else %}
     <p>記録がありません。</p>
   {% endif %}
+  <a href="{{ url_for('dashboard.record_progress', user_id=current_user.id) }}">
+    📈 自分の記録推移を見る
+  </a>
+
 {% endblock %}

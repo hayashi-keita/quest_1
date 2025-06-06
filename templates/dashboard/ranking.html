@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 class="mb-4">🏅 選手ランキング</h2>
+
+<h4>走力ランキング（50m走, ベースラン）</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>順位</th>
+      <th>名前</th>
+      <th>50m走（秒）</th>
+      <th>ベースラン（秒）</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in speed_ranking %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.run_50m }}</td>
+      <td>{{ row.base_running }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>肩力ランキング（遠投, 球速）</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>順位</th>
+      <th>名前</th>
+      <th>遠投（m）</th>
+      <th>球速（km/h）</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in arm_ranking %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.long_throw }}</td>
+      <td>{{ row.pitch_speed }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>打力ランキング（打球速度, スイング速度）</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>順位</th>
+      <th>名前</th>
+      <th>打球速度（km/h）</th>
+      <th>スイング速度（km/h）</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in hit_ranking %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.hit_speed }}</td>
+      <td>{{ row.swing_speed }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>筋力ランキング（ベンチプレス, スクワット）</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>順位</th>
+      <th>名前</th>
+      <th>ベンチプレス（kg）</th>
+      <th>スクワット（kg）</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in strength_ranking %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.bench_press }}</td>
+      <td>{{ row.squat }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

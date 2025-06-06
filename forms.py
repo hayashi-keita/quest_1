@@ -13,10 +13,11 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField('パスワード確認', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('役割', choices=[('member', '部員'), ('manager', 'マネージャー'), ('coach', 'コーチ'), ('admin', '監督')], default='member')
     grade = SelectField('学年', choices=[('１年', '1'), ('２年', '2'), ('３年', '3'), ('職員', 'teacher')])
+    name = StringField('名前', validators=[DataRequired()])
     submit = SubmitField('登録')
 
 class RecordForm(FlaskForm):
-    member = SelectField('部員名', coerce=int, validators=[DataRequired()])
+    member = SelectField('ユーザー名', coerce=int, validators=[DataRequired()])
     month = StringField('測定月（例：2025-06）', validators=[DataRequired()])
     grade = StringField('学年', validators=[DataRequired()])
     name = StringField('名前', validators=[DataRequired()])
