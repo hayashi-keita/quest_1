@@ -2,6 +2,13 @@
 
 {% block content %}
   <h2 class="mb-4">📈 記録推移 - {{ user.name }} さん</h2>
+  <!-- 記録推移タイトルのすぐ下に追加 -->
+<div class="mb-3">
+  <a href="{{ url_for('dashboard.record_profile', user_id=user.id) }}" class="btn btn-outline-primary">
+    📊 レーダーチャートを見る
+  </a>
+</div>
+
 
   <canvas id="progressChart" height="120"></canvas>
 

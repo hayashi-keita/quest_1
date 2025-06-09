@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2 class="mb-4">🧭 レーダーチャート - {{ user.name }} さん</h2>
+
+  <!-- ✅ Chart.js を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ✅ JSON データをscriptタグに埋め込む -->
+  <script id="json-data" type="application/json">
+    {{ data | tojson | safe }}
+  </script>
+
+  <canvas id="radarChart" width="300" height="300"></canvas>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const rawData = JSON.parse(document.getElementById("json-data").textContent);
+      const personal = rawData.personal;
+      const teamAvg = rawData.team_avg;
+
+      const labels = [
+        "50m走（秒）", "ベースランニング（秒）", "遠投（m）", "球速（km）",
+        "スイング速度（km）", "打球速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
+      ];
+
+      // 視覚的に50m走など「小さいほど良い」種目は反転して見せる（100から引く）
+      const values = [
+        100 - (personal.run_50m || 0),
+        100 - (personal.base_running || 0),
+        personal.long_throw || 0,
+        personal.pitch_speed || 0,
+        personal.swing_speed || 0,
+        personal.hit_speed || 0,
+        personal.bench_press || 0,
+        personal.squat || 0
+      ];
+
+      const avgValues = [
+        100 - (teamAvg.run_50m || 0),
+        100 - (teamAvg.base_running || 0),
+        teamAvg.long_throw || 0,
+        teamAvg.pitch_speed || 0,
+        teamAvg.swing_speed || 0,
+        teamAvg.hit_speed || 0,
+        teamAvg.bench_press || 0,
+        teamAvg.squat || 0
+      ];
+
+      const ctx = document.getElementById("radarChart").getContext("2d");
+
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "{{ user.name }}（本人）",
+              data: values,
+              fill: true,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+            },
+            {
+              label: "チーム平均",
+              data: avgValues,
+              fill: true,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}

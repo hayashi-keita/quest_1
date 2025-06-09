@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container mt-4">
-  <h2>あなたの記録（承認待ち）</h2>
+
+<h2>あなたの記録（承認待ち）</h2>
   {% if records %}
-    <table class="table table-striped">
+  <table class="table table-striped">
       <thead>
         <tr>
           <th>日付</th>
+          <th>記録月</th>
           <th>50m走</th>
           <th>ベースラン</th>
           <th>遠投</th>
@@ -23,6 +24,7 @@
           <tr>
             <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
             <td>{{ record.run_50m }}</td>
+            <td>{{ record.month }}</td>
             <td>{{ record.base_running }}</td>
             <td>{{ record.long_throw }}</td>
             <td>{{ record.pitch_speed }}</td>

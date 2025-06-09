@@ -1,61 +1,61 @@
-{% extends "layout.html" %}
+  {% extends "layout.html" %}
 
-{% block content %}
-  <h2>全員の記録一覧</h2>
-  <!-- 🔽 絞り込みフォーム -->
-  <form method="get" action="{{ url_for('record.all_records') }}" class="form-inline mb-4">
-    {{ form.hidden_tag() }}
-    <div class="form-group mr-2">
-      {{ form.grade.label(class="mr-2") }}
-      {{ form.grade(class="form-control") }}
-    </div>
-    <div class="form-group mr-2">
-      {{ form.name.label(class="mr-2") }}
-      {{ form.name(class="form-control") }}
-    </div>
-    <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
-  </form>
-  <!-- 🔼 フォームここまで -->
-  <table class="table table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>ユーザー名</th>
-        <th>日付</th>
-        <th>記録月</th>
-        <th>学年</th>
-        <th>名前</th>
-        <th>50m走</th>
-        <th>ベースランニング</th>
-        <th>遠投</th>
-        <th>投球速度</th>
-        <th>打球速度</th>
-        <th>スイング速度</th>
-        <th>ベンチプレス</th>
-        <th>スクワット</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
+  {% block content %}
+    <h2>全員の記録一覧</h2>
+    <!-- 🔽 絞り込みフォーム -->
+    <form method="get" action="{{ url_for('record.all_records') }}" class="form-inline mb-4">
+      {{ form.hidden_tag() }}
+      <div class="form-group mr-2">
+        {{ form.grade.label(class="mr-2") }}
+        {{ form.grade(class="form-control") }}
+      </div>
+      <div class="form-group mr-2">
+        {{ form.name.label(class="mr-2") }}
+        {{ form.name(class="form-control") }}
+      </div>
+      <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+    </form>
+    <!-- 🔼 フォームここまで -->
+    <table class="table table-striped table-bordered">
+      <thead>
         <tr>
-          <td>{{ users[record.user_id] }}</td>
-          <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
-          <td>{{ record.month }}</td>
-          <td>{{ record.grade }}</td>
-          <td>{{ record.name }}</td>
-          <td>{{ record.run_50m }}</td>
-          <td>{{ record.base_running }}</td>
-          <td>{{ record.long_throw }}</td>
-          <td>{{ record.pitch_speed }}</td>
-          <td>{{ record.hit_speed }}</td>
-          <td>{{ record.swing_speed }}</td>
-          <td>{{ record.bench_press }}</td>
-          <td>{{ record.squat }}</td>
+          <th>ユーザー名</th>
+          <th>日付</th>
+          <th>記録月</th>
+          <th>学年</th>
+          <th>名前</th>
+          <th>50m走</th>
+          <th>ベースランニング</th>
+          <th>遠投</th>
+          <th>投球速度</th>
+          <th>打球速度</th>
+          <th>スイング速度</th>
+          <th>ベンチプレス</th>
+          <th>スクワット</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ users[record.user_id] }}</td>
+            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ record.month }}</td>
+            <td>{{ record.grade }}</td>
+            <td>{{ record.name }}</td>
+            <td>{{ record.run_50m }}</td>
+            <td>{{ record.base_running }}</td>
+            <td>{{ record.long_throw }}</td>
+            <td>{{ record.pitch_speed }}</td>
+            <td>{{ record.hit_speed }}</td>
+            <td>{{ record.swing_speed }}</td>
+            <td>{{ record.bench_press }}</td>
+            <td>{{ record.squat }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <a href="{{ url_for('dashboard.show_dashboard') }}">ダッシュボード画面</a>
-  <a href="{{ url_for('dashboard.dashboard_summary') }}">全体ダッシュボード画面</a>
-  <a href="{{ url_for('dashboard.ranking') }}">項目別ランキング画面</a>
-  {% endblock %}
+    <a href="{{ url_for('dashboard.show_dashboard') }}">カテゴリ別グラフ</a>
+    <a href="{{ url_for('dashboard.dashboard_summary') }}">統計グラフ</a>
+    <a href="{{ url_for('dashboard.ranking') }}">項目別ランキング画面</a>
+    {% endblock %}

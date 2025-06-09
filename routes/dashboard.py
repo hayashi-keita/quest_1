@@ -31,7 +31,7 @@ def my_graph():
     else:
         target_user_id = current_user.id
     # 対象ユーザーの記録を日付順に取得
-    records = Record.query.filter_by(user_id=target_user_id).order_by(Record.date).all()
+    records = Record.query.filter_by(user_id=target_user_id).order_by(Record.month.asc()).all()
     selected_user = User.query.get('target_user_id')
     selected_name = selected_user.name if selected_user else '不明'
 
@@ -118,7 +118,7 @@ def record_progress(user_id):
     # ユーザーidで対象選手を取得
     user = User.query.get_or_404(user_id)
     # その選手の記録を日付順に取得（承認済のみ）
-    records = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.date).all()
+    records = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.month.asc()).all()
 
     if not records:
         flash('承認済の記録がありません', 'warning')
@@ -132,6 +132,7 @@ def record_progress(user_id):
     hit_speed = [r.hit_speed for r in records]
     bench_press = [r.bench_press for r in records]
     squat = [r.squat for r in records]
+    print([r.month for r in records])
 
     return render_template('dashboard/record_progress.html',
                             user=user, dates=dates, run_50m=run_50m, base_running=base_running,
@@ -142,6 +143,10 @@ def record_progress(user_id):
 @dashboard.route('/dashboard/summary')
 @login_required
 def dashboard_summary():
+    if current_user.role not in ['coach', 'admin']:
+        flash('このページはアクセスできません。', 'danger')
+        return redirect(url_for('index'))
+
     # 学年ごとの記録取得・平均処理
     records = Record.query.filter_by(coach_approval=True).all()
     # 学年ごとのリスト初期化（すべての項目を含む）
@@ -192,6 +197,10 @@ def dashboard_summary():
 @dashboard.route('/dashboard/ranking')
 @login_required
 def ranking():
+    if current_user.role not in ['coach', 'admin']:
+        flash('このページはアクセスできません。', 'danger')
+        return redirect(url_for('index'))
+
     # 走力ランキング：50m走 + ベースランニング（昇順が良い）
     speed_ranking = Record.query.filter_by(coach_approval=True).order_by(Record.run_50m.asc()).limit(10).all()
     # 肩力ランキング：遠投 + 球速（降順が良い）
@@ -206,3 +215,30 @@ def ranking():
                             arm_ranking=arm_ranking,
                             hit_ranking=hit_ranking,
                             strength_ranking=strength_ranking)
+
+@dashboard.route('/dashboard/record_profile/<int:user_id>')
+@login_required
+def record_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    # 最新の承認済の記録を取得
+    record = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.date.asc()).first()
+    if not record:
+        flash('記録が見つかりません。', 'warning')
+        return redirect(url_for('dashboard.dashboard_summary'))
+
+    all_records = Record.query.filter_by(coach_approval=True).all()
+    if not all_records:
+        flash('平均値を計算できる記録が存在しません。', 'warning')
+        return redirect(url_for('dashboard.dashboard_summary'))
+
+    def avg(field):
+        values = [getattr(r, field) for r in all_records if getattr(r, field) is not None]
+        return round(sum(values) / len(values), 2) if values else 0
+
+    fields = ['run_50m', 'base_running','long_throw', 'pitch_speed',
+            'swing_speed', 'hit_speed','bench_press', 'squat']
+
+    data = {'personal': {f: getattr(record, f) for f in fields},
+            'team_avg': {f: avg(f) for f in fields}}
+
+    return render_template('dashboard/record_profile.html', user=user, data=data)

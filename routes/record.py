@@ -33,6 +33,8 @@ def register_record():
                             bench_press=form.bench_press.data,
                             squat= form.squat.data
         )
+
+
         db.session.add(new_record)
         db.session.commit()
         flash('記録を登録しました。')
@@ -44,7 +46,7 @@ def register_record():
 @record.route('/records')
 @login_required
 def view_records():
-    records = Record.query.filter_by(user_id=current_user.id).order_by(Record.date.desc()).all()
+    records = Record.query.filter_by(user_id=current_user.id).order_by(Record.month.asc()).all()
     return render_template('record_list.html', records=records)
 
 # 全部員の記録
@@ -58,13 +60,13 @@ def all_records():
     form = FilterForm(request.args)
     query = Record.query.join(User)  # データベースからユーザー名を検索し結合
 
-    if form.validate_on_submit():
+    if form.validate():
         if form.grade.data:
             query = query.filter(User.grade == form.grade.data)
         if form.name.data:
             query =query.filter(User.name.contains(form.name.data))
 
-    records = Record.query.order_by(Record.date.desc()).all()
+    records = query.order_by(Record.month.asc()).all()
     users = {user.id: user.username for user in User.query.all()}
     return render_template('all_records.html', records=records, users=users, form=form)
 
@@ -73,7 +75,7 @@ def all_records():
 @login_required
 def my_approvals():
     #部員の記録を取得
-    records = Record.query.filter_by(user_id=current_user.id).order_by(Record.date.desc()).all()
+    records = Record.query.filter_by(user_id=current_user.id, member_approval=False).order_by(Record.date.desc()).all()
     return render_template('my_approvals.html', records=records)
 
 # コーチだけの承認ページ

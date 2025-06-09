@@ -31,12 +31,11 @@
 
   {% if graph_url %}
   <div class="mt-4">
-    <h4>{{ select_user_id }} さんの {{ fields[select_field] }} の推移</h4>
+    <h4>{{ current_user.name }} さんの {{ fields[select_field] }} の推移</h4>
     <img src="data:image/png;base64,{{ graph_url }}" class="img-fluid mt-3 border">
   </div>
   {% elif submitted %}
   <div class="alert alert-warning mt-4">記録が見つかりませんでした。</div>
   {% endif %}
 </div>
-
 {% endblock %}

@@ -6,6 +6,7 @@
       <thead>
         <tr>
           <th>日付</th>
+          <th>記録月</th>
           <th>50m</th>
           <th>ベースラン</th>
           <th>遠投</th>
@@ -20,6 +21,7 @@
         {% for record in records %}
         <tr>
           <td>{{ record.date }}</td>
+          <td>{{ record.month }}</td>
           <td>{{ record.run_50m }}</td>
           <td>{{ record.base_running }}</td>
           <td>{{ record.long_throw }}</td>
