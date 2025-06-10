@@ -35,6 +35,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.view_records') }}">自分の記録</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('record.reject_records') }}">差し戻し一覧</a>
+              </li>
             {% endif %}
 
             <!-- マネージャー用メニュー -->
@@ -44,6 +47,9 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.all_records') }}">全記録一覧</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('record.reject_records') }}">差し戻し一覧</a>
               </li>
             {% endif %}
 

@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>差し戻し記録一覧</h2>
+  {% if records %}
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>日付</th>
+          <th>選手名</th>
+          <th>50m走</th>
+          <th>ベースランニング</th>
+          <th>遠投</th>
+          <th>球速</th>
+          <th>打球速度</th>
+          <th>スイングスピード</th>
+          <th>ベンチプレス</th>
+          <th>スクワット</th>
+          <th>差し戻し理由</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.date.strftime('%Y-%m-%d') if record.date else '―' }}</td>
+          <td>{{ users[record.user_id] }}</td>
+          <td>{{ record.run_50m or '-' }}</td>
+          <td>{{ record.base_running or '-' }}</td>
+          <td>{{ record.long_throw or '-' }}</td>
+          <td>{{ record.pitch_speed or '-' }}</td>
+          <td>{{ record.hit_speed or '-' }}</td>
+          <td>{{ record.swing_speed or '-' }}</td>
+          <td>{{ record.bench_press or '-' }}</td>
+          <td>{{ record.squat or '-' }}</td>
+          <td class="text-danger">{{ record.reject_reason or '-' }}</td>
+          <td>
+            <a href="{{ url_for('record.edit_record', record_id=record.id) }}" class="btn btn-sm btn-primary">編集</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">差し戻された記録はありません。</p>
+  {% endif %}
+</div>
+{% endblock %}

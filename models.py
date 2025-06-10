@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
 class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date = db.Column(db.Date, default=datetime.now)
+    date = db.Column(db.Date, default=datetime.today)
     month = db.Column(db.String(10))
     grade = db.Column(db.String(10))
     name = db.Column(db.String(50))
@@ -31,3 +31,6 @@ class Record(db.Model):
     # 承認フラグ
     member_approval = db.Column(db.Boolean, default=False)
     coach_approval = db.Column(db.Boolean, default=False)
+    # 差し戻し理由・フラグ
+    reject_reason = db.Column(db.String(255), nullable=True)
+    is_rejected = db.Column(db.Boolean, default=False)

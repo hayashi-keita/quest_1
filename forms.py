@@ -35,3 +35,7 @@ class FilterForm(FlaskForm):
     grade = SelectField('学年', choices=[('１年', '１年'), ('２年', '２年'), ('３年', '３年')])
     name = StringField('名前')
     submit = SubmitField('絞り込み')
+
+class RejectForm(FlaskForm):
+    reject_reason = StringField('差し戻し理由', validators=[DataRequired()])
+    submit = SubmitField('差し戻す')

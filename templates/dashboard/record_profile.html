@@ -11,7 +11,10 @@
     {{ data | tojson | safe }}
   </script>
 
-  <canvas id="radarChart" width="300" height="300"></canvas>
+  <!-- ✅ サイズ制御用のコンテナ -->
+  <div class="chart-container" style="width: 400px; height: 400px; margin: auto;">
+    <canvas id="radarChart" style="width:100%; height:100%;"></canvas>
+  </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -24,7 +27,7 @@
         "スイング速度（km）", "打球速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
       ];
 
-      // 視覚的に50m走など「小さいほど良い」種目は反転して見せる（100から引く）
+      // 視覚的に「小さいほど良い」項目を反転して見せる（100から引く）
       const values = [
         100 - (personal.run_50m || 0),
         100 - (personal.base_running || 0),
@@ -80,6 +83,11 @@
             r: {
               beginAtZero: true,
               max: 100
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom'
             }
           }
         }

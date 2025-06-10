@@ -36,6 +36,7 @@
               {% if not record.member_approval %}
               <form method="post" action="{{ url_for('record.approve_by_member', record_id=record.id) }}">
                 <button type="submit" class="btn btn-success btn-sm">承認</button>
+                <a href="{{ url_for('record.reject_record', record_id=record.id) }}" class="btn btn-sm btn-outline-danger">差し戻し</a>
               </form>
               {% else %}
                 <span class="text-success">承認済</span>

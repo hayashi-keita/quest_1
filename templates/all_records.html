@@ -32,6 +32,7 @@
           <th>スイング速度</th>
           <th>ベンチプレス</th>
           <th>スクワット</th>
+          <th>変更</th>
         </tr>
       </thead>
       <tbody>
@@ -50,6 +51,12 @@
             <td>{{ record.swing_speed }}</td>
             <td>{{ record.bench_press }}</td>
             <td>{{ record.squat }}</td>
+            <td>
+              <a href="{{ url_for('record.edit_record', record_id=record.id) }}" class="btn btn-sm btn-warning">編集</a>
+              <form action="{{ url_for('record.delete_record', record_id=record.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('削除しますか？')">削除</button>
+              </form>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

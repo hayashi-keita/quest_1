@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>記録登録</h2>
-<form method="POST">
+<form method="POST" class="mb-5">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.member.label }}<br>
@@ -64,6 +64,8 @@
         {{ form.squat(class="form-control") }}
     </div>
 
-    <button type="submit" class="btn btn-primary">登録</button>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">登録</button>
+    </div>
 </form>
 {% endblock %}

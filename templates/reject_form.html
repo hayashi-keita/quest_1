@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>記録の差し戻し</h2>
+  <p><strong>対象選手:</strong> {{ users[record.user_id] if users else '' }}</p>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.reject_reason.label(class="form-label") }}
+      {{ form.reject_reason(class="form-control") }}
+      {% if form.reject_reason.errors %}
+        <div class="text-danger">{{ form.reject_reason.errors[0] }}</div>
+      {% endif %}
+    </div>
+    <button type="submit" class="btn btn-danger">差し戻す</button>
+    <a href="{{ url_for('record.coach_approvals') }}" class="btn btn-secondary">戻る</a>
+  </form>
+</div>
+{% endblock %}
