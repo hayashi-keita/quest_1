@@ -11,6 +11,7 @@ from routes.auth import auth  # Blueprint（routes.py内）で定義したルー
 from routes.record import record
 from routes.user import user
 from routes.dashboard import dashboard
+from routes.notification import notification
 
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
 app.config['SECRET_KEY'] = 'your-secret-key'  # フォームなどのセキュリティー用のキー
@@ -30,6 +31,7 @@ app.register_blueprint(auth)  # Flask アプリにルートを登録（登録し
 app.register_blueprint(record)
 app.register_blueprint(user)
 app.register_blueprint(dashboard)
+app.register_blueprint(notification)
 
 # テーブル作成
 # with app.app_context():

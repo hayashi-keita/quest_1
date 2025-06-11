@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2>通知一覧</h2>
+  {% if notifications %}
+    <ul class="list-group">
+      {% for note in notifications %}
+        <li class="list-group-item">
+          {{ note.message }}<br>
+          <small class="text-muted">{{ note.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+          <form method="POST" action="{{ url_for('notification.delete_notification', notification_id=note.id) }}" style="margin: 0;">
+            <button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>通知はありません。</p>
+  {% endif %}
+{% endblock %}

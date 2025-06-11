@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from datetime import datetime
 from forms import RecordForm, FilterForm, RejectForm
-from models import db, Record, User
+from models import db, Record, User, Notification
 
 
 # 記録画面登録
@@ -87,7 +87,8 @@ def all_records():
 @login_required
 def my_approvals():
     #部員の記録を取得
-    records = Record.query.filter_by(user_id=current_user.id, member_approval=False).order_by(Record.date.desc()).all()
+    records = Record.query.filter_by(user_id=current_user.id, member_approval=False)\
+        .filter(Record.is_rejected == False).order_by(Record.date.desc()).all()
     return render_template('my_approvals.html', records=records)
 
 # コーチだけの承認ページ
@@ -149,13 +150,36 @@ def reject_record(record_id):
 
     form = RejectForm()
     if form.validate_on_submit():
+        # 差し戻し処理
         record.reject_reason = form.reject_reason.data
         record.is_rejected = True
         record.member_approval = False  # 差し戻すなら承認状態を解除
         record.coach_approval = False
+
+        # 通知処理
+        if current_user.role == 'member':
+            # 部員が差し戻す → マネージャーに通知
+            manager_user = User.query.filter_by(role='manager').first()
+            if manager_user:
+                notification = Notification(user_id=manager_user.id,
+                                            message=f'{record.name}さんの{record.month}の記録が部員より差し戻されました。理由: {record.reject_reason}')
+
+                db.session.add(notification)
+
+        elif current_user.role == 'coach':
+            # コーチが差し戻す → 部員に通知
+            notification = Notification(user_id=record.user_id,
+                                        message=f'{record.month}の{record.name}さんの記録がコーチより差し戻されました。理由: {record.reject_reason}')
+
+            db.session.add(notification)
+
         db.session.commit()
         flash('記録を差し戻しました。', 'warning')
-        return redirect(url_for('record.coach_approvals'if current_user == 'coach' else 'record.my_approvals'))
+
+        if current_user.role == 'coach':
+            return redirect(url_for('record.coach_approvals'))
+        else:
+            return redirect(url_for('record.my_approvals'))
 
     return render_template('reject_form.html', form=form, record=record)
 
@@ -169,7 +193,7 @@ def edit_record(record_id):
         return redirect(url_for('index'))
 
     record = Record.query.get_or_404(record_id)
-    form = RecordForm(obj=record)
+    form = RecordForm(obj=record)  # 初期値をセット
     form.member.choices = [(u.id, u.username) for u in User.query.filter_by(role='member').all()]
 
     if form.validate_on_submit():
@@ -186,8 +210,13 @@ def edit_record(record_id):
         record.bench_press = form.bench_press.data
         record.squat = form.squat.data
 
+        record.is_rejected = False
+        record.reject_reason = None
+        record.member_approval = False
+        record.coach_approval = False
+
         db.session.commit()
-        flash('記録を更新しました。', 'success')
+        flash('記録を更新し、再申請しました。', 'success')
         return redirect(url_for('record.all_records'))
 
     return render_template('edit_record.html', form=form, record=record)

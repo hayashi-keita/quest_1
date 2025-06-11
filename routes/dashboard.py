@@ -9,60 +9,9 @@ import base64
 from sqlalchemy.sql import asc, func
 from collections import defaultdict
 from sqlalchemy import desc
+from flask_sqlalchemy import SQLAlchemy
 
 dashboard = Blueprint('dashboard', __name__)
-
-@dashboard.route('/my_graph', methods=['GET', 'POST'])
-@login_required
-def my_graph():
-    fields = {'run_50m': '50m走',
-              'swing_speed': 'スイング速度',
-              'pitch_speed': '投球速度',
-              'hit_speed': '打球速度',
-              'long_throw': '遠投',
-              'bench_press': 'ベンチプレス',
-              'squat': 'スクワット'}
-    # フォームの情報を取得する（GET）
-    select_field = request.form.get('field', 'run_50m')  # デフォルト５０メートル走
-    selected_user_id = request.form.get('user_id') or current_user.id
-    # 表示対象のユーザーを取得
-    if current_user.role in ['coach', 'admin']:
-        target_user_id = int(selected_user_id)
-    else:
-        target_user_id = current_user.id
-    # 対象ユーザーの記録を日付順に取得
-    records = Record.query.filter_by(user_id=target_user_id).order_by(Record.month.asc()).all()
-    selected_user = User.query.get('target_user_id')
-    selected_name = selected_user.name if selected_user else '不明'
-
-    # 有効データを抽出
-    dates = [r.month for r in records if getattr(r, select_field) is not None]
-    values = [getattr(r,select_field) for r in records if getattr(r, select_field) is not None]
-
-    # 文字化け防止
-    matplotlib.rcParams['font.family'] = 'MS Gothic'
-    # グラフ描画
-    plt.figure(figsize=(8, 4))
-    plt.plot(dates, values, marker='o', label=fields[select_field])
-    plt.xlabel('月')
-    plt.ylabel(f'{fields[select_field]} の記録推移')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.legend()
-
-    # Base64画像に変換
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    graph_url = base64.b64encode(img.getvalue()).decode()
-    plt.close()
-
-    members = []
-    if current_user.role in ['coach', 'admin']:
-        members = User.query.filter_by(role='member').all()
-
-    return render_template('my_graph.html', graph_url=graph_url, fields=fields, select_field=select_field,
-                            members=members, select_user_id=target_user_id, selected_name=selected_name, submitted=True)
 
 # ダッシュボード作成
 @dashboard.route('/dashboard')
@@ -117,6 +66,10 @@ def show_dashboard():
 def record_progress(user_id):
     # ユーザーidで対象選手を取得
     user = User.query.get_or_404(user_id)
+    # アクセス制御：自分の記録 or コーチ・監督のみ閲覧
+    if current_user.id != user_id and current_user.role not in ['member', 'coach', 'admit']:
+        flash('このページにアクセスする権限がありません。', 'danger')
+        return redirect(url_for('index'))
     # その選手の記録を日付順に取得（承認済のみ）
     records = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.month.asc()).all()
 
@@ -242,3 +195,24 @@ def record_profile(user_id):
             'team_avg': {f: avg(f) for f in fields}}
 
     return render_template('dashboard/record_profile.html', user=user, data=data)
+
+# 部員記録検索ページ
+@dashboard.route('/dashboard/member_search/', methods=['GET', 'POST'])
+@login_required
+def member_search():
+    if current_user.role not in ['coach', 'admit']:
+        flash('アクセス権限がありません。', 'danger')
+        return redirect(url_for('index'))
+
+    members = []
+    keyword = ''
+
+    if request.method == 'POST':
+        keyword = request.form.get('keyword', '').strip()
+        if keyword:
+            members = User.query.filter(User.role == 'member',
+                                        User.name.ilike(f'%{keyword}%')).all()
+        else:
+            flash('キーワードを入力してください。', 'warning')
+
+    return render_template('dashboard/member_search.html', members=members, keyword=keyword)

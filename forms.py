@@ -3,8 +3,8 @@ from wtforms import StringField, PasswordField, SubmitField, FloatField, SelectF
 from wtforms.validators import DataRequired, length, EqualTo
 
 class LoginForm(FlaskForm):
-    username = StringField('ユーザー名', validators=[DataRequired()])
-    password = PasswordField('パスワード', validators=[DataRequired()])
+    username = StringField('ユーザー名', validators=[DataRequired()], render_kw={'autocomplete': 'off'})
+    password = PasswordField('パスワード', validators=[DataRequired()], render_kw={'autocomplete': 'new-password'})
     submit = SubmitField('ログイン')
 
 class RegisterForm(FlaskForm):

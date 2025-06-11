@@ -34,3 +34,13 @@ class Record(db.Model):
     # 差し戻し理由・フラグ
     reject_reason = db.Column(db.String(255), nullable=True)
     is_rejected = db.Column(db.Boolean, default=False)
+
+# 通知機能
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # 通知の宛先
+    message = db.Column(db.String(255), nullable=False)  # 通知の内容
+    is_read = db.Column(db.Boolean, default=False)  # 既読フラグ
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    user = db.relationship('User', backref='notifications')
+

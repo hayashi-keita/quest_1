@@ -55,6 +55,7 @@
           <input type="hidden" name="action" value="leave">
           <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('退会扱いにしますか？')">退会</button>
         </form>
+        <a href="{{ url_for('dashboard.record_progress', user_id=member.id) }}" class="btn btn-outline-info btn-sm mt-1">記録グラフ</a>
       </td>
     </tr>
     {% else %}

@@ -20,23 +20,19 @@
         <ul class="navbar-nav me-auto">
           {% if current_user.is_authenticated %}
 
-            <!-- 共通機能：グラフ -->
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('dashboard.my_graph', user_id=current_user.id, field='run_50m') }}">
-                グラフ表示
-              </a>
-            </li>
-
             <!-- 部員用メニュー -->
             {% if current_user.role == 'member' %}
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('record.my_approvals') }}">自分の承認</a>
+                <a class="nav-link" href="{{ url_for('record.my_approvals') }}">承認通知</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('record.view_records') }}">自分の記録</a>
+                <a class="nav-link" href="{{ url_for('notification.notifications') }}">差し戻し通知</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.reject_records') }}">差し戻し一覧</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('record.view_records') }}">自分記録</a>
               </li>
             {% endif %}
 
@@ -46,20 +42,26 @@
                 <a class="nav-link" href="{{ url_for('record.register_record') }}">記録登録</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('record.all_records') }}">全記録一覧</a>
+                <a class="nav-link" href="{{ url_for('notification.notifications') }}">差し戻し通知</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.reject_records') }}">差し戻し一覧</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('record.all_records') }}">全記録一覧</a>
               </li>
             {% endif %}
 
             <!-- コーチ用メニュー -->
             {% if current_user.role == 'coach' %}
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('record.coach_approvals') }}">コーチ承認</a>
+                <a class="nav-link" href="{{ url_for('record.coach_approvals') }}">コーチ承認通知</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.all_records') }}">全記録一覧</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('dashboard.member_search') }}">部員検索</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('user.manage_members') }}">部員管理</a>
@@ -70,6 +72,9 @@
             {% if current_user.role == 'admin' %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('record.all_records') }}">全記録一覧</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('dashboard.member_search') }}">部員検索</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('user.manage_members') }}">部員管理</a>

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>部員検索（記録グラフ）</h2>
+
+<form method="POST" class="form-inline mb-4">
+  <div class="form-group">
+    <input type="text" name="keyword" class="form-control" placeholder="名前で検索" value="{{ keyword }}">
+  </div>
+  <div class="mt-2">
+    <button type="submit" class="btn btn-primary ml-2">検索</button>
+  </div>
+</form>
+
+{% if members %}
+  <ul class="list-group">
+    {% for member in members %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ member.name }}（{{ member.grade }}）
+        <a href="{{ url_for('dashboard.record_progress', user_id=member.id) }}" class="btn btn-outline-info btn-sm">記録グラフ</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% elif keyword %}
+  <p>該当する部員が見つかりませんでした。</p>
+{% endif %}
+{% endblock %}
