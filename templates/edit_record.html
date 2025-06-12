@@ -2,10 +2,13 @@
 
 {% block content %}
   <h2>記録を編集</h2>
-  <form method="POST" class="mb-5">
+  <form method="POST"
+        action="{{ url_for('record.edit_record', record_id=record.id) }}"
+        class="mb-5">
     {{ form.hidden_tag() }}
     
-    {% for field in form if field.name != 'csrf_token' and field.name != 'submit' %}
+    {# CSRF と submit フィールド以外をループで出力 #}
+    {% for field in form if field.name not in ['csrf_token', 'submit'] %}
       <div class="mb-3">
         {{ field.label(class="form-label") }}
         {{ field(class="form-control") }}
@@ -15,10 +18,10 @@
       </div>
     {% endfor %}
 
-    <!-- 手動の送信ボタン -->
+    <!-- 明示的に追加した送信ボタン -->
     <div class="mt-4">
-        <button type="submit" class="btn btn-primary me-2">更新</button>
-        <a href="{{ url_for('record.all_records') }}" class="btn btn-secondary">戻る</a>
+      <button type="submit" class="btn btn-primary me-2">更新</button>
+      <a href="{{ url_for('record.all_records') }}" class="btn btn-secondary">戻る</a>
     </div>
   </form>
 {% endblock %}

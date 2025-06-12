@@ -1,11 +1,6 @@
 from flask import Blueprint, render_template, request, abort, flash, redirect, url_for
 from flask_login import login_required, current_user
 from models import Record, User, db
-import matplotlib
-matplotlib.use('Agg')  # GUI描画を無効化（Flaskでは必須）
-import matplotlib.pyplot as plt
-import io
-import base64
 from sqlalchemy.sql import asc, func
 from collections import defaultdict
 from sqlalchemy import desc

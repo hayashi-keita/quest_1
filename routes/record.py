@@ -34,10 +34,17 @@ def register_record():
                             squat= form.squat.data
         )
 
-
         db.session.add(new_record)
+        db.session.flush()  # new_record.user_id を使えるようにする
+
+        # 部員に通知を送信
+        notification = Notification(user_id=new_record.user_id,
+                                    message=f'{new_record.month}の記録がマネージャーにより登録されました。承認をお願いします。')
+
+        db.session.add(notification)
         db.session.commit()
-        flash('記録を登録しました。')
+
+        flash('記録を登録して通知を送信しました。', 'success')
         return redirect(url_for('record.register_record'))
 
     return render_template('record.html', form=form)
@@ -46,12 +53,13 @@ def register_record():
 @record.route('/reject_records')
 @login_required
 def reject_records():
-    if current_user.role == 'manager':
-        records = Record.query.filter_by(is_rejected=True).order_by(Record.date.desc()).all()
-    else:
-        records = Record.query.filter_by(user_id=current_user.id, is_rejected=True).order_by(Record.date.desc()).all()
-
+    if current_user.role != 'manager':
+        flash('アクセス権限がありません。', 'danger')
+        return redirect(url_for('index'))
+    # 差し戻し記録を取得
+    records = Record.query.filter_by(is_rejected=True).order_by(Record.date.desc()).all()
     users = {user.id: user.username for user in User.query.all()}
+
     return render_template('reject_records.html', records=records, users=users)
 
 # ログイン中部員の記録
@@ -131,8 +139,15 @@ def approve_by_member(record_id):
         return redirect(url_for('record.my_approvals'))
 
     records.member_approval = True
+    # コーチに通知
+    coaches = User.query.filter_by(role='coach').all()
+    for coach in coaches:
+        notification = Notification(user_id=coach.id,
+                                    message=f'{records.name}さんの{records.month}の記録が部員に承認されました。ご確認ください。')
+        db.session.add(notification)
+
     db.session.commit()
-    flash('記録を承認しました。', 'success')
+    flash('記録を承認し、通知を送信しました。', 'success')
     return redirect(url_for('record.my_approvals'))
 
 # 差し戻しルート
@@ -215,7 +230,12 @@ def edit_record(record_id):
         record.member_approval = False
         record.coach_approval = False
 
+        notification = Notification(user_id=record.user_id,
+                                    message=f'{record.month}の記録がマネージャーにより登録されました。承認をお願いします。')
+
+        db.session.add(notification)
         db.session.commit()
+
         flash('記録を更新し、再申請しました。', 'success')
         return redirect(url_for('record.all_records'))
 

@@ -64,7 +64,7 @@ def update_member_status(user_id):
     elif action == 'leave':
         # 退会などの処理
         user.status = 'left'
-        flash(f'{user.username}さんを退会扱いにしました。', 'success')
+        flash(f'{user.username}さんを引退扱いにしました。', 'success')
     else:
         flash('不正な操作です。', 'danger')
 

@@ -11,7 +11,7 @@ def notifications():
             .order_by(Notification.created_at.desc()).all()
     return render_template('notifications.html', notifications=notes)
 
-# 差し戻しデータ削除処理
+# 通知データ削除処理
 @notification.route('/notification/delete/<int:notification_id>', methods=['POST'])
 @login_required
 def delete_notification(notification_id):

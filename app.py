@@ -1,12 +1,12 @@
 # venv\Scripts\activate
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-from models import db, User  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
+from models import db, User, Notification  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
 from routes.user import user
@@ -25,6 +25,14 @@ LoginManager.login_view = 'auth.login'  # ログインが必要なページに�
 @LoginManager.user_loader  # Flask-Loginが「今ログインしている人」を取得する方法を定義
 def load_user(user_id):
     return User.query.get(int(user_id))  # データベースから user_id に一致するユーザーを探して返す
+
+@app.context_processor
+def inject_notification_count():
+    if current_user.is_authenticated:
+        cnt = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
+    else:
+        cnt = 0
+    return dict(notification_count=cnt)
 
 # Blueprint の登録
 app.register_blueprint(auth)  # Flask アプリにルートを登録（登録しないと /login などが使えない）
