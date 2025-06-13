@@ -80,11 +80,11 @@ def all_records():
     form = FilterForm(request.args)
     query = Record.query.join(User)  # データベースからユーザー名を検索し結合
 
-    if form.validate():
-        if form.grade.data:
-            query = query.filter(User.grade == form.grade.data)
-        if form.name.data:
-            query =query.filter(User.name.contains(form.name.data))
+
+    if form.grade.data != '0':
+        query = query.filter(User.grade == form.grade.data)
+    if form.name.data:
+        query =query.filter(User.name.contains(form.name.data))
 
     records = query.order_by(Record.month.asc()).all()
     users = {user.id: user.username for user in User.query.all()}
@@ -210,6 +210,7 @@ def edit_record(record_id):
     record = Record.query.get_or_404(record_id)
     form = RecordForm(obj=record)  # 初期値をセット
     form.member.choices = [(u.id, u.username) for u in User.query.filter_by(role='member').all()]
+    form.member.data = record.user_id
 
     if form.validate_on_submit():
         record.user_id = form.member.data
@@ -232,6 +233,7 @@ def edit_record(record_id):
 
         notification = Notification(user_id=record.user_id,
                                     message=f'{record.month}の記録がマネージャーにより登録されました。承認をお願いします。')
+
 
         db.session.add(notification)
         db.session.commit()

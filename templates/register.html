@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
   <h2>新規登録</h2>
-  <form method="POST">
+  <form method="POST" autocomplete="off">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">
@@ -16,12 +16,10 @@
       {{ form.password(class="form-control") }}
     </div>
 
-    <!-- ✅ 追加ここから -->
     <div class="mb-3">
       {{ form.confirm_password.label(class="form-label") }}
       {{ form.confirm_password(class="form-control") }}
     </div>
-    <!-- ✅ 追加ここまで -->
 
     <div class="mb-3">
       {{ form.role.label(class="form-label") }}

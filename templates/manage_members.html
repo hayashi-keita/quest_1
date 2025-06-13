@@ -19,9 +19,9 @@
     <label for="grade" class="form-label">学年</label>
     <select class="form-select" id="grade" name="grade" required>
       <option value="">選択してください</option>
-      <option value="１年">１年</option>
-      <option value="２年">２年</option>
-      <option value="３年">３年</option>
+      <option value="１">１</option>
+      <option value="２">２</option>
+      <option value="３">３</option>
     </select>
   </div>
 
@@ -29,7 +29,7 @@
 </form>
 
 <!-- 部員一覧 -->
-<table class="table table-striped">
+<table class="table table-striped table-bordered">
   <thead>
     <tr>
       <th>ユーザー名</th>
@@ -48,12 +48,16 @@
       <td>{{ member.status or '在籍中' }}</td>
       <td>
         <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
-          <input type="hidden" name="action" value="retire">
+          <input type="hidden" name="action" value="退部">
           <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('退部扱いにしますか？')">退部</button>
         </form>
         <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
-          <input type="hidden" name="action" value="leave">
+          <input type="hidden" name="action" value="引退">
           <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('引退扱いにしますか？')">引退</button>
+        </form>
+        <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
+          <input type="hidden" name="action" value="在籍中">
+          <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('在籍扱いにしますか？')">在籍</button>
         </form>
         <a href="{{ url_for('dashboard.record_progress', user_id=member.id) }}" class="btn btn-outline-info btn-sm mt-1">記録グラフ</a>
       </td>

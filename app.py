@@ -30,6 +30,7 @@ def load_user(user_id):
 def inject_notification_count():
     if current_user.is_authenticated:
         cnt = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
+        print(f"未読通知数: {cnt}")
     else:
         cnt = 0
     return dict(notification_count=cnt)

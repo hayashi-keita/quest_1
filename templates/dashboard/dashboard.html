@@ -46,7 +46,7 @@
       new Chart(document.getElementById("chartRun"), {
         type: "bar",
         data: {
-          labels: grades,
+          labels: grades.map(g => g + "年"),
           datasets: [
             {
               label: "50m走（秒）",
@@ -67,7 +67,7 @@
       new Chart(document.getElementById("chartShoulder"), {
         type: "bar",
         data: {
-          labels: grades,
+          labels: grades.map(g => g + "年"),
           datasets: [
             {
               label: "遠投（m）",
@@ -88,7 +88,7 @@
       new Chart(document.getElementById("chartBatting"), {
         type: "bar",
         data: {
-          labels: grades,
+          labels: grades.map(g => g + "年"),
           datasets: [
             {
               label: "打球速度（km/h）",
@@ -109,7 +109,7 @@
       new Chart(document.getElementById("chartStrength"), {
         type: "bar",
         data: {
-          labels: grades,
+          labels: grades.map(g => g + "年"),
           datasets: [
             {
               label: "ベンチプレス（kg）",

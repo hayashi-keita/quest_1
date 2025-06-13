@@ -7,7 +7,9 @@
       <thead class="table-light">
         <tr>
           <th>日付</th>
-          <th>選手名</th>
+          <th>ユーザー名</th>
+          <th>学年</th>
+          <th>名前</th>
           <th>50m走</th>
           <th>ベースランニング</th>
           <th>遠投</th>
@@ -25,6 +27,8 @@
         <tr>
           <td>{{ record.date.strftime('%Y-%m-%d') if record.date else '―' }}</td>
           <td>{{ users[record.user_id] }}</td>
+          <td>{{ record.grade }}</td>
+          <td>{{ record.name }}</td>
           <td>{{ record.run_50m or '-' }}</td>
           <td>{{ record.base_running or '-' }}</td>
           <td>{{ record.long_throw or '-' }}</td>

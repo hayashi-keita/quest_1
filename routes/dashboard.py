@@ -49,7 +49,7 @@ def show_dashboard():
         avg_bench.append(round(bench or 0, 2))
         avg_squat.append(round(squat or 0, 2))
 
-    return render_template('dashboard.html',
+    return render_template('dashboard/dashboard.html',
                             grades=grades, avg_run_50m=avg_run_50m,
                             avg_base_run=avg_base_run, avg_long_throw=avg_long_throw,
                             avg_pitch=avg_pitch, avg_swing=avg_swing,
@@ -62,7 +62,7 @@ def record_progress(user_id):
     # ユーザーidで対象選手を取得
     user = User.query.get_or_404(user_id)
     # アクセス制御：自分の記録 or コーチ・監督のみ閲覧
-    if current_user.id != user_id and current_user.role not in ['member', 'coach', 'admit']:
+    if current_user.id != user_id and current_user.role not in ['member', 'coach', 'admin']:
         flash('このページにアクセスする権限がありません。', 'danger')
         return redirect(url_for('index'))
     # その選手の記録を日付順に取得（承認済のみ）
@@ -80,7 +80,6 @@ def record_progress(user_id):
     hit_speed = [r.hit_speed for r in records]
     bench_press = [r.bench_press for r in records]
     squat = [r.squat for r in records]
-    print([r.month for r in records])
 
     return render_template('dashboard/record_progress.html',
                             user=user, dates=dates, run_50m=run_50m, base_running=base_running,
@@ -195,7 +194,7 @@ def record_profile(user_id):
 @dashboard.route('/dashboard/member_search/', methods=['GET', 'POST'])
 @login_required
 def member_search():
-    if current_user.role not in ['coach', 'admit']:
+    if current_user.role not in ['coach', 'admin']:
         flash('アクセス権限がありません。', 'danger')
         return redirect(url_for('index'))
 

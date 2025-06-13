@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import User, db 
+from models import User, db
 from functools import wraps
 
 user = Blueprint('user', __name__)
@@ -57,14 +57,18 @@ def update_member_status(user_id):
     user = User.query.get_or_404(user_id)
     action = request.form.get('action')
 
-    if action == 'retired':
+    if action == '退部':
         # 退部処理例（ステータスフラグを変えるなど）
-        user.status = 'retired'
+        user.status = '退部'
         flash(f'{user.username}さんを退部扱いにしました。', 'success')
-    elif action == 'leave':
+    elif action == '引退':
         # 退会などの処理
-        user.status = 'left'
+        user.status = '引退'
         flash(f'{user.username}さんを引退扱いにしました。', 'success')
+    elif action == '在籍中':
+        # 退会などの処理
+        user.status = '在籍中'
+        flash(f'{user.username}さんを在籍扱いにしました。', 'success')
     else:
         flash('不正な操作です。', 'danger')
 

@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(50), default='member')
     grade = db.Column(db.String(10))
     name = db.Column(db.String(50))
+    status = db.Column(db.String(20), default='在籍中')
     records = db.relationship('Record', backref='user', lazy=True)
 
 class Record(db.Model):

@@ -12,14 +12,14 @@ class RegisterForm(FlaskForm):
     password = PasswordField('パスワード', validators=[DataRequired(), length(min=6)])
     confirm_password = PasswordField('パスワード確認', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('役割', choices=[('member', '部員'), ('manager', 'マネージャー'), ('coach', 'コーチ'), ('admin', '監督')], default='member')
-    grade = SelectField('学年', choices=[('１年', '1'), ('２年', '2'), ('３年', '3'), ('職員', 'teacher')])
+    grade = SelectField('学年', choices=[('1', '1'), ('2', '2'), ('3', '3'), ('職員', 'teacher')])
     name = StringField('名前', validators=[DataRequired()])
     submit = SubmitField('登録')
 
 class RecordForm(FlaskForm):
     member = SelectField('ユーザー名', coerce=int, validators=[DataRequired()])
     month = StringField('測定月（例：2025-06）', validators=[DataRequired()])
-    grade = StringField('学年', validators=[DataRequired()])
+    grade = SelectField('学年', choices=[('1', '1'), ('2', '2'), ('3', '3')])
     name = StringField('名前', validators=[DataRequired()])
     run_50m = FloatField('50m走 [秒]', validators=[DataRequired()])
     base_running = FloatField('ベースランニング [秒]', validators=[DataRequired()])
@@ -32,7 +32,7 @@ class RecordForm(FlaskForm):
     submit = SubmitField('記録を更新')
 
 class FilterForm(FlaskForm):
-    grade = SelectField('学年', choices=[('１年', '１年'), ('２年', '２年'), ('３年', '３年')])
+    grade = SelectField('学年', choices=[('0', '全て'), ('1', '１年'), ('2', '２年'), ('3', '３年')])
     name = StringField('名前')
     submit = SubmitField('絞り込み')
 

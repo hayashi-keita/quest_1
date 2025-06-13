@@ -2,6 +2,7 @@
 
 {% block content %}
   <h2>記録を編集</h2>
+  
   <form method="POST"
         action="{{ url_for('record.edit_record', record_id=record.id) }}"
         class="mb-5">
