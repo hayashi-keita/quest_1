@@ -9,6 +9,5 @@ __pycache__/
 # VSCode 設定（必要であれば）
 .vscode/
 
-team_data.db
-__pycache__/
+
 
