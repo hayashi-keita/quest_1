@@ -19,11 +19,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///team_data.db'  # データベ
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 migrate = Migrate(app, db)
 
-if os.environ.get('RENDER'):
-    from flask_migrate import upgrade
-    with app.app_context():
-        upgrade()
-
 
 LoginManager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
 LoginManager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定

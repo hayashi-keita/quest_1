@@ -19,9 +19,9 @@
     <label for="grade" class="form-label">学年</label>
     <select class="form-select" id="grade" name="grade" required>
       <option value="">選択してください</option>
-      <option value="１">１</option>
-      <option value="２">２</option>
-      <option value="３">３</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
     </select>
   </div>
 
@@ -59,6 +59,10 @@
           <input type="hidden" name="action" value="在籍中">
           <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('在籍扱いにしますか？')">在籍</button>
         </form>
+        <form method="post" action="{{ url_for('user.update_member_status', user_id=member.id) }}" style="display:inline-block;">
+          <input type="hidden" name="action" value="削除">
+          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('本当に削除しますか？この操作は取り消せません。')">削除</button>
+        </form>
         <a href="{{ url_for('dashboard.record_progress', user_id=member.id) }}" class="btn btn-outline-info btn-sm mt-1">記録グラフ</a>
       </td>
     </tr>
@@ -67,6 +71,7 @@
     {% endfor %}
   </tbody>
 </table>
-
-<a href="{{ url_for('index') }}">← トップに戻る</a>
+<div class="mb-4">
+ <a href="{{ url_for('index') }}">← トップに戻る</a>
+</div>
 {% endblock %}

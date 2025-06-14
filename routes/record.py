@@ -78,13 +78,13 @@ def all_records():
         return redirect(url_for('index'))
 
     form = FilterForm(request.args)
-    query = Record.query.join(User)  # データベースからユーザー名を検索し結合
+    query = Record.query
 
+    if form.grade.data and form.grade.data != '0':
+        query = query.filter(Record.grade == form.grade.data)
 
-    if form.grade.data != '0':
-        query = query.filter(User.grade == form.grade.data)
     if form.name.data:
-        query =query.filter(User.name.contains(form.name.data))
+        query =query.filter(Record.name.contains(form.name.data))
 
     records = query.order_by(Record.month.asc()).all()
     users = {user.id: user.username for user in User.query.all()}
@@ -250,6 +250,7 @@ def delete_record(record_id):
     if current_user.role != 'manager':
         flash('アクセス権限がありません。', 'danger')
         return redirect(url_for('index'))
+    print('現在のカレントユーザー名', current_user.username, '役割', current_user.role)
 
     record = Record.query.get_or_404(record_id)
     db.session.delete(record)
