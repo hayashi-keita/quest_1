@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-from models import db, User, Notification  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
+from models import db, User, Notification, Record  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
 from routes.user import user
