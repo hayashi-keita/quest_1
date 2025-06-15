@@ -8,8 +8,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField('ログイン')
 
 class RegisterForm(FlaskForm):
-    username = StringField('ユーザー名', validators=[DataRequired(), length(min=3, max=20)])
-    password = PasswordField('パスワード', validators=[DataRequired(), length(min=6)])
+    username = StringField('ユーザー名', validators=[DataRequired(), length(min=3, max=20)], render_kw={'autocomplete': 'off'})
+    password = PasswordField('パスワード', validators=[DataRequired(), length(min=6)], render_kw={'autocomplete': 'new-password'})
     confirm_password = PasswordField('パスワード確認', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('役割', choices=[('member', '部員'), ('manager', 'マネージャー'), ('coach', 'コーチ'), ('admin', '監督')], default='member')
     grade = SelectField('学年', choices=[('1', '1'), ('2', '2'), ('3', '3'), ('職員', 'teacher')])
@@ -32,7 +32,7 @@ class RecordForm(FlaskForm):
     submit = SubmitField('記録を更新')
 
 class FilterForm(FlaskForm):
-    grade = SelectField('学年', choices=[('0', '全て'), ('1', '１年'), ('2', '２年'), ('3', '３年')])
+    grade = SelectField('学年', choices=[('0', '全て'), ('1', '1'), ('2', '2'), ('3', '3')])
     name = StringField('名前')
     submit = SubmitField('絞り込み')
 

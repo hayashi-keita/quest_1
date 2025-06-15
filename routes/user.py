@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import User, db
+from models import User, db, Notification
 from functools import wraps
+from datetime import datetime
 
 user = Blueprint('user', __name__)
 
@@ -61,14 +62,29 @@ def update_member_status(user_id):
         # 退部処理例（ステータスフラグを変えるなど）
         user.status = '退部'
         flash(f'{user.username}さんを退部扱いにしました。', 'success')
+        notifi = Notification(user_id=user.id, message=f'{user.username}さんが退部しました。',
+                              created_at=datetime.now())
+        db.session.add(notifi)
     elif action == '引退':
         # 退会などの処理
         user.status = '引退'
         flash(f'{user.username}さんを引退扱いにしました。', 'success')
+        notifi = Notification(user_id=user.id, message=f'{user.username}さんが引退しました。',
+                              created_at=datetime.now())
+        db.session.add(notifi)
     elif action == '在籍中':
         # 退会などの処理
         user.status = '在籍中'
         flash(f'{user.username}さんを在籍扱いにしました。', 'success')
+        notifi = Notification(user_id=user.id, message=f'{user.username}さんが在籍扱いになりました。',
+                              created_at=datetime.now())
+        db.session.add(notifi)
+    elif action == '削除':
+        Notification.query.filter_by(user_id=user.id).delete()
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'{user.username}さんを削除しました。', 'danger')
+        return redirect(url_for('user.manage_members'))
     else:
         flash('不正な操作です。', 'danger')
 
