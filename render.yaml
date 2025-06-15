@@ -1,8 +1,9 @@
-services:
-  - type: web
-    name: quest1-flask  # ←あなたのアプリ名に合わせて変更
-    env: python
-    buildCommand: |
-      pip install -r requirements.txt
-      flask db upgrade
-    startCommand: gunicorn app:app
+  services:
+    - type: web
+      name: quest1-flask  # ←あなたのアプリ名に合わせて変更
+      env: python
+      buildCommand: |
+        pip install -r requirements.txt
+        export FLASK_APP=app.py
+        flask db upgrade
+      startCommand: gunicorn app:app

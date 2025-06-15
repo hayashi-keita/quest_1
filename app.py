@@ -17,6 +17,8 @@ app = Flask(__name__)  # __name__はこのファイルが実行されるとき�
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key_for_local')  # フォームなどのセキュリティー用のキー
 # SQLite（ローカル用）とPostgreSQL（Render用）を切り替えられるようにする
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///team_data.db')  # データベースの保存場所を指定
+print("DB URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 migrate = Migrate(app, db)
 
