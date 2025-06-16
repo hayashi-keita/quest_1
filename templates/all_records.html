@@ -60,7 +60,10 @@
               </form>
             </td>
           </tr>
-        {% endfor %}
+          {% else %}
+          <tr><td colspan="3">登録されている部員はありません。</td></tr>
+          {% endfor %}
+
       </tbody>
     </table>
   <div class="d-flex flex-column">
