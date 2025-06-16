@@ -1,4 +1,4 @@
- # venv\Scripts\activate
+    # venv\Scripts\activate
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-from models import db, User, Notification  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
+from models import db, User, Notification, Record  # ユーザー情報などの「データ構造」（Userモデル）を定義している別ファイル models.py から読み込む
 from routes.auth import auth  # Blueprint（routes.py内）で定義したルーティングを使えるようにする
 from routes.record import record
 from routes.user import user
@@ -16,7 +16,10 @@ from routes.notification import notification
 
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key')  # フォームなどのセキュリティー用のキー
+# SQLite（ローカル用）とPostgreSQL（Render用）を切り替えられるようにする
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///team_data.db')  # データベースの保存場所を指定
+print("DB URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 migrate = Migrate(app, db)
 
