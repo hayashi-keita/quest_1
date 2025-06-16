@@ -23,8 +23,8 @@ print("DB URI:", app.config['SQLALCHEMY_DATABASE_URI'])
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 migrate = Migrate(app, db)
 
-LoginManager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
-LoginManager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
+login_manager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
+login_manager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
 
 @LoginManager.user_loader  # Flask-Loginが「今ログインしている人」を取得する方法を定義
 def load_user(user_id):
