@@ -15,8 +15,8 @@ from routes.notification import notification
 
 
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
-app.config['SECRET_KEY'] = 'your-secret-key'  # フォームなどのセキュリティー用のキー
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///team_data.db'  # データベースの保存場所を指定
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key')  # フォームなどのセキュリティー用のキー
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///team_data.db')  # データベースの保存場所を指定
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 migrate = Migrate(app, db)
 
