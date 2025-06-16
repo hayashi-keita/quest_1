@@ -2,7 +2,7 @@
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
@@ -54,6 +54,15 @@ app.register_blueprint(notification)
 @app.route('/')
 def index():
     return redirect(url_for('auth.login'))
+
+@app.before_first_request
+def run_migrations():
+    try:
+        print("🔄 データベースマイグレーションを実行します...")
+        upgrade()
+        print("✅ マイグレーション完了")
+    except Exception as e:
+        print(f'⚠️ マイグレーション失敗: {e}')
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
