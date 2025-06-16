@@ -26,7 +26,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
 login_manager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
 
-@LoginManager.user_loader  # Flask-Loginが「今ログインしている人」を取得する方法を定義
+@login_manager.user_loader  # Flask-Loginが「今ログインしている人」を取得する方法を定義
 def load_user(user_id):
     return User.query.get(int(user_id))  # データベースから user_id に一致するユーザーを探して返す
 
@@ -55,14 +55,6 @@ app.register_blueprint(notification)
 def index():
     return redirect(url_for('auth.login'))
 
-@app.before_first_request
-def run_migrations():
-    try:
-        print("🔄 データベースマイグレーションを実行します...")
-        upgrade()
-        print("✅ マイグレーション完了")
-    except Exception as e:
-        print(f'⚠️ マイグレーション失敗: {e}')
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
