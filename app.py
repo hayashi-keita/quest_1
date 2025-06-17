@@ -59,6 +59,10 @@ def index():
 def healthz_check():
     return 'OK', 200
 
+with app.app_context():
+    from flask_migrate import upgrade
+    upgrade()
+
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
