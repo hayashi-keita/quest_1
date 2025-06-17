@@ -1,4 +1,5 @@
-    # venv\Scripts\activate
+
+    # .venv\Scripts\activate
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -59,9 +60,10 @@ def index():
 def healthz_check():
     return 'OK', 200
 
-with app.app_context():
-    from flask_migrate import upgrade
-    upgrade()
+
+# with app.app_context():
+    # from flask_migrate import upgrade
+    # upgrade()
 
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
