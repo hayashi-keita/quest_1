@@ -55,6 +55,10 @@ app.register_blueprint(notification)
 def index():
     return redirect(url_for('auth.login'))
 
+@app.route('/healthz')
+def healthz_check():
+    return 'OK', 200
+
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
