@@ -1,6 +1,4 @@
-
-    # .venv\Scripts\activate
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for  # .venv\Scripts\activate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate, upgrade
@@ -22,7 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 print("DB URI:", app.config['SQLALCHEMY_DATABASE_URI'])
 
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
 login_manager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定
@@ -35,7 +33,6 @@ def load_user(user_id):
 def inject_notification_count():
     if current_user.is_authenticated:
         cnt = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
-        print(f"未読通知数: {cnt}")
     else:
         cnt = 0
     return dict(notification_count=cnt)
@@ -46,10 +43,6 @@ app.register_blueprint(record)
 app.register_blueprint(user)
 app.register_blueprint(dashboard)
 app.register_blueprint(notification)
-
-# テーブル作成
-# with app.app_context():
-    # db.create_all()
 
 # トップページにアクセスされたとき、自動的にログインページにリダイレクトする関数
 @app.route('/')
@@ -67,4 +60,7 @@ def healthz_check():
 
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
+    # テーブル作成
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
