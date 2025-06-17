@@ -1,2 +1,2 @@
-quest_1/__init__.py
+
 # このファイルがquest_1をPythonパッケージとして扱うためのものです
