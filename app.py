@@ -44,6 +44,9 @@ app.register_blueprint(user)
 app.register_blueprint(dashboard)
 app.register_blueprint(notification)
 
+with app.app_context():
+    db.create_all()
+
 # トップページにアクセスされたとき、自動的にログインページにリダイレクトする関数
 @app.route('/')
 def index():
