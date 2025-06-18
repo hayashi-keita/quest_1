@@ -5,7 +5,6 @@ from datetime import datetime
 db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)  # 各ユーザーの一意のIDを付ける
     username = db.Column(db.String(150), unique=True, nullable=False)  # ユーザー名、重複を許さない、空も不可
     password = db.Column(db.String(150), nullable=True)  # パスワード、空は不可
@@ -17,7 +16,7 @@ class User(UserMixin, db.Model):
 
 class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, default=datetime.today)
     month = db.Column(db.String(10))
     grade = db.Column(db.String(10))
@@ -40,7 +39,7 @@ class Record(db.Model):
 # 通知機能
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # 通知の宛先
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # 通知の宛先
     message = db.Column(db.String(255), nullable=False)  # 通知の内容
     is_read = db.Column(db.Boolean, default=False)  # 既読フラグ
     created_at = db.Column(db.DateTime, default=datetime.now)
