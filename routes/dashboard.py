@@ -27,6 +27,9 @@ def show_dashboard():
                               func.avg(Record.bench_press),
                               func.avg(Record.squat)
                             ).filter(Record.coach_approval == True).group_by(Record.grade).all()
+
+    result = sorted(result, key=lambda x: x[0])
+
     grades = []
     avg_run_50m = []
     avg_base_run = []
