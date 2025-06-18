@@ -16,9 +16,11 @@ from routes.notification import notification
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key')  # フォームなどのセキュリティー用のキー
 # SQLite（ローカル用）とPostgreSQL（Render用）を切り替えられるようにする
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///team_data.db')  # データベースの保存場所を指定
-print("DB URI:", app.config['SQLALCHEMY_DATABASE_URI'])
-
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')  # データベースの保存場所を指定
+uri = os.environ.get('DATABASE_URL')
+if not uri:
+    raise RuntimeError('DATABASE_URL が設定されていません')
+app.config['SQLALCHEMY_DATABASE_URI'] = uri
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
 # migrate = Migrate(app, db)
 
@@ -44,8 +46,6 @@ app.register_blueprint(user)
 app.register_blueprint(dashboard)
 app.register_blueprint(notification)
 
-with app.app_context():
-    db.create_all()
 
 # トップページにアクセスされたとき、自動的にログインページにリダイレクトする関数
 @app.route('/')
@@ -64,6 +64,6 @@ def healthz_check():
 
 if __name__ == '__main__':  # このファイルが直接実行されたときだけ、アプリを起動
     # テーブル作成
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+        # db.create_all()
     app.run(debug=True)  # debug=True にすると変更が即時反映され、エラーも詳しく表示される
