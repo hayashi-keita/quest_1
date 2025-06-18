@@ -16,13 +16,14 @@ from routes.notification import notification
 app = Flask(__name__)  # __name__はこのファイルが実行されるときの名前
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key')  # フォームなどのセキュリティー用のキー
 # SQLite（ローカル用）とPostgreSQL（Render用）を切り替えられるようにする
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')  # データベースの保存場所を指定
 uri = os.environ.get('DATABASE_URL')
 if not uri:
     raise RuntimeError('DATABASE_URL が設定されていません')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
+
 db.init_app(app)  # FlaskとSQLAlchemyを接続し、DB操作できるようにする
-# migrate = Migrate(app, db)
+migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)  # ログイン状態を管理する仕組みを初期化
 login_manager.login_view = 'auth.login'  # ログインが必要なページにアクセスしたときに login という関数のURLにリダイレクトする設定

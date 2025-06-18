@@ -1,21 +1,45 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div class="container pb-5">
   <h2 class="mb-4">📈 記録推移 - {{ user.name }} さん</h2>
-  <!-- 記録推移タイトルのすぐ下に追加 -->
-<div class="mb-3">
-  <a href="{{ url_for('dashboard.record_profile', user_id=user.id) }}" class="btn btn-outline-primary">
-    📊 レーダーチャートを見る
-  </a>
+
+  <!-- レーダーチャートへのリンク -->
+  <div class="mb-3">
+    <a href="{{ url_for('dashboard.record_profile', user_id=user.id) }}" class="btn btn-outline-primary">
+      📊 レーダーチャートを見る
+    </a>
+  </div>
+
+  <!-- 種目セレクトボックスと全選択ボタン -->
+  <div class="mb-4">
+    <label for="metricSelector" class="form-label">表示する種目を選択：</label>
+
+    <!-- 全選択ボタン -->
+    <button type="button" id="selectAllBtn" class="btn btn-sm btn-secondary mb-2">
+      ✅ 全てを選択
+    </button>
+
+    <select id="metricSelector" class="form-select" multiple size="8">
+      <option value="run_50m" selected>50m走</option>
+      <option value="base_running" selected>ベースランニング</option>
+      <option value="long_throw" selected>遠投</option>
+      <option value="pitch_speed" selected>球速</option>
+      <option value="swing_speed" selected>スイング速度</option>
+      <option value="hit_speed" selected>打球速度</option>
+      <option value="bench_press" selected>ベンチプレス</option>
+      <option value="squat" selected>スクワット</option>
+    </select>
+  </div>
+
+  <!-- グラフキャンバス -->
+  <canvas id="progressChart" height="120"></canvas>
 </div>
 
-
-  <canvas id="progressChart" height="120"></canvas>
-
-  <!-- Chart.js CDN -->
+<!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- JSONデータを埋め込み -->
+  <!-- JSONデータ埋め込み -->
   <script id="progress-data" type="application/json">
     {{ {
       "dates": dates,
@@ -35,114 +59,94 @@
     document.addEventListener("DOMContentLoaded", function () {
       const data = JSON.parse(document.getElementById('progress-data').textContent);
 
+      const metrics = {
+        run_50m:        { label: '50m走（秒）',            data: data.run_50m,       color: 'rgba(255, 99, 132, 1)' },
+        base_running:   { label: 'ベースランニング（秒）', data: data.base_running,  color: 'rgba(75, 192, 192, 1)' },
+        long_throw:     { label: '遠投（m）',               data: data.long_throw,    color: 'rgba(153, 102, 255, 1)' },
+        pitch_speed:    { label: '球速（km/h）',            data: data.pitch_speed,   color: 'rgba(255, 159, 64, 1)' },
+        swing_speed:    { label: 'スイング速度（km/h）',    data: data.swing_speed,   color: 'rgba(54, 162, 235, 1)' },
+        hit_speed:      { label: '打球速度（km/h）',        data: data.hit_speed,     color: 'rgba(255, 206, 86, 1)' },
+        bench_press:    { label: 'ベンチプレス（kg）',       data: data.bench_press,   color: 'rgba(201, 203, 207, 1)' },
+        squat:          { label: 'スクワット（kg）',         data: data.squat,         color: 'rgba(0, 128, 0, 1)' }
+      };
+
       const ctx = document.getElementById('progressChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.dates,
-          datasets: [
-            {
-              label: '50m走（秒）',
-              data: data.run_50m,
-              borderColor: 'rgba(255, 99, 132, 1)',
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: 'ベースランニング（秒）',
-              data: data.base_running,
-              borderColor: 'rgba(75, 192, 192, 1)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: '遠投（m）',
-              data: data.long_throw,
-              borderColor: 'rgba(153, 102, 255, 1)',
-              backgroundColor: 'rgba(153, 102, 255, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: '球速（km/h）',
-              data: data.pitch_speed,
-              borderColor: 'rgba(255, 159, 64, 1)',
-              backgroundColor: 'rgba(255, 159, 64, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: 'スイング速度（km/h）',
-              data: data.swing_speed,
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: '打球速度（km/h）',
-              data: data.hit_speed,
-              borderColor: 'rgba(255, 206, 86, 1)',
-              backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: 'ベンチプレス（kg）',
-              data: data.bench_press,
-              borderColor: 'rgba(201, 203, 207, 1)',
-              backgroundColor: 'rgba(201, 203, 207, 0.2)',
-              fill: false,
-              tension: 0.1
-            },
-            {
-              label: 'スクワット（kg）',
-              data: data.squat,
-              borderColor: 'rgba(0, 128, 0, 1)',
-              backgroundColor: 'rgba(0, 128, 0, 0.2)',
-              fill: false,
-              tension: 0.1
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: '各項目の記録推移（承認済のみ）'
-            },
-            legend: {
-              position: 'top'
-            },
-            tooltip: {
-              mode: 'index',
-              intersect: false
-            }
+      let chart = null;
+
+      function renderChart(selectedKeys) {
+        const datasets = selectedKeys.map(key => ({
+          label: metrics[key].label,
+          data: metrics[key].data,
+          borderColor: metrics[key].color,
+          backgroundColor: metrics[key].color.replace('1)', '0.2)'),
+          fill: false,
+          tension: 0.1
+        }));
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.dates,
+            datasets: datasets
           },
-          interaction: {
-            mode: 'nearest',
-            axis: 'x',
-            intersect: false
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
+          options: {
+            responsive: true,
+            plugins: {
               title: {
                 display: true,
-                text: '測定値'
+                text: '各項目の記録推移（承認済のみ）'
+              },
+              legend: {
+                position: 'top'
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
               }
             },
-            x: {
-              title: {
-                display: true,
-                text: '月（YYYY-MM）'
+            interaction: {
+              mode: 'nearest',
+              axis: 'x',
+              intersect: false
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: '測定値'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: '月（YYYY-MM）'
+                }
               }
             }
           }
+        });
+      }
+
+      // 初期描画（全項目表示）
+      renderChart(Object.keys(metrics));
+
+      // セレクト変更イベントで再描画
+      document.getElementById('metricSelector').addEventListener('change', function () {
+        const selected = Array.from(this.selectedOptions).map(opt => opt.value);
+        renderChart(selected);
+      });
+
+      // 全選択ボタンの処理
+      document.getElementById('selectAllBtn').addEventListener('click', function () {
+        const selector = document.getElementById('metricSelector');
+        for (const option of selector.options) {
+          option.selected = true;
         }
+        const selected = Array.from(selector.selectedOptions).map(opt => opt.value);
+        renderChart(selected);
       });
     });
   </script>
