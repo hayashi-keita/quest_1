@@ -13,8 +13,8 @@
   "avg_base_running": {{ avg_base_running | tojson | safe }},
   "avg_long_throw": {{ avg_long_throw | tojson | safe }},
   "avg_pitch_speed": {{ avg_pitch_speed | tojson | safe }},
-  "avg_swing": {{ avg_swing | tojson | safe }},
   "avg_hit_speed": {{ avg_hit_speed | tojson | safe }},
+  "avg_swing": {{ avg_swing | tojson | safe }},
   "avg_bench_press": {{ avg_bench_press | tojson | safe }},
   "avg_squat": {{ avg_squat | tojson | safe }}
 }
@@ -50,14 +50,14 @@ new Chart(ctx, {
         backgroundColor: 'rgba(75, 192, 192, 0.6)'
       },
       {
-        label: 'スイング速度（km/h）',
-        data: data.avg_swing,
-        backgroundColor: 'rgba(153, 102, 255, 0.6)'
-      },
-      {
         label: '打球速度（km/h）',
         data: data.avg_hit_speed,
         backgroundColor: 'rgba(255, 159, 64, 0.6)'
+      },
+      {
+        label: 'スイング速度（km/h）',
+        data: data.avg_swing,
+        backgroundColor: 'rgba(153, 102, 255, 0.6)'
       },
       {
         label: 'ベンチプレス（kg）',

@@ -24,7 +24,7 @@
 
       const labels = [
         "50m走（秒）", "ベースランニング（秒）", "遠投（m）", "球速（km）",
-        "スイング速度（km）", "打球速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
+        "打球速度（km）", "スイング速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
       ];
 
       const values = [
@@ -32,8 +32,8 @@
         100 - (personal.base_running || 0),
         personal.long_throw || 0,
         personal.pitch_speed || 0,
-        personal.swing_speed || 0,
         personal.hit_speed || 0,
+        personal.swing_speed || 0,
         personal.bench_press || 0,
         personal.squat || 0
       ];
@@ -43,8 +43,8 @@
         100 - (teamAvg.base_running || 0),
         teamAvg.long_throw || 0,
         teamAvg.pitch_speed || 0,
-        teamAvg.swing_speed || 0,
         teamAvg.hit_speed || 0,
+        teamAvg.swing_speed || 0,
         teamAvg.bench_press || 0,
         teamAvg.squat || 0
       ];

@@ -25,8 +25,8 @@
       <option value="base_running" selected>ベースランニング</option>
       <option value="long_throw" selected>遠投</option>
       <option value="pitch_speed" selected>球速</option>
-      <option value="swing_speed" selected>スイング速度</option>
       <option value="hit_speed" selected>打球速度</option>
+      <option value="swing_speed" selected>スイング速度</option>
       <option value="bench_press" selected>ベンチプレス</option>
       <option value="squat" selected>スクワット</option>
     </select>
@@ -47,8 +47,8 @@
       "base_running": base_running,
       "long_throw": long_throw,
       "pitch_speed": pitch_speed,
-      "swing_speed": swing_speed,
       "hit_speed": hit_speed,
+      "swing_speed": swing_speed,
       "bench_press": bench_press,
       "squat": squat
     } | tojson | safe }}
@@ -64,8 +64,8 @@
         base_running:   { label: 'ベースランニング（秒）', data: data.base_running,  color: 'rgba(75, 192, 192, 1)' },
         long_throw:     { label: '遠投（m）',               data: data.long_throw,    color: 'rgba(153, 102, 255, 1)' },
         pitch_speed:    { label: '球速（km/h）',            data: data.pitch_speed,   color: 'rgba(255, 159, 64, 1)' },
-        swing_speed:    { label: 'スイング速度（km/h）',    data: data.swing_speed,   color: 'rgba(54, 162, 235, 1)' },
         hit_speed:      { label: '打球速度（km/h）',        data: data.hit_speed,     color: 'rgba(255, 206, 86, 1)' },
+        swing_speed:    { label: 'スイング速度（km/h）',    data: data.swing_speed,   color: 'rgba(54, 162, 235, 1)' },
         bench_press:    { label: 'ベンチプレス（kg）',       data: data.bench_press,   color: 'rgba(201, 203, 207, 1)' },
         squat:          { label: 'スクワット（kg）',         data: data.squat,         color: 'rgba(0, 128, 0, 1)' }
       };

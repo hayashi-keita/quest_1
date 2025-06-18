@@ -22,8 +22,8 @@ def show_dashboard():
                               func.avg(Record.base_running),
                               func.avg(Record.long_throw),
                               func.avg(Record.pitch_speed),
-                              func.avg(Record.swing_speed),
                               func.avg(Record.hit_speed),
+                              func.avg(Record.swing_speed),
                               func.avg(Record.bench_press),
                               func.avg(Record.squat)
                             ).filter(Record.coach_approval == True).group_by(Record.grade).all()
@@ -32,28 +32,28 @@ def show_dashboard():
     avg_base_run = []
     avg_long_throw = []
     avg_pitch = []
-    avg_swing = []
     avg_hit = []
+    avg_swing = []
     avg_bench = []
     avg_squat = []
 
 
-    for grade, run_50m, base_run, long_throw, pitch, swing, hit, bench, squat in result:
+    for grade, run_50m, base_run, long_throw, pitch, hit, swing, bench, squat in result:
         grades.append(grade)
         avg_run_50m.append(round(run_50m or 0, 2))
         avg_base_run.append(round(base_run or 0, 2))
         avg_long_throw.append(round(long_throw or 0, 2))
         avg_pitch.append(round(pitch or 0, 2))
-        avg_swing.append(round(swing or 0, 2))
         avg_hit.append(round(hit or 0, 2))
+        avg_swing.append(round(swing or 0, 2))
         avg_bench.append(round(bench or 0, 2))
         avg_squat.append(round(squat or 0, 2))
 
     return render_template('dashboard/dashboard.html',
                             grades=grades, avg_run_50m=avg_run_50m,
                             avg_base_run=avg_base_run, avg_long_throw=avg_long_throw,
-                            avg_pitch=avg_pitch, avg_swing=avg_swing,
-                            avg_hit=avg_hit, avg_bench=avg_bench, avg_squat=avg_squat)
+                            avg_pitch=avg_pitch, avg_hit=avg_hit, avg_swing=avg_swing,
+                            avg_bench=avg_bench, avg_squat=avg_squat)
 
 
 @dashboard.route('/dashboard/record_progress/<int:user_id>')
@@ -76,15 +76,15 @@ def record_progress(user_id):
     base_running = [r.base_running for  r in records]
     long_throw = [r.long_throw for r in records]
     pitch_speed = [r.pitch_speed for r in records]
-    swing_speed = [r.swing_speed for r in records]
     hit_speed = [r.hit_speed for r in records]
+    swing_speed = [r.swing_speed for r in records]
     bench_press = [r.bench_press for r in records]
     squat = [r.squat for r in records]
 
     return render_template('dashboard/record_progress.html',
                             user=user, dates=dates, run_50m=run_50m, base_running=base_running,
                             long_throw=long_throw, pitch_speed=pitch_speed,
-                            swing_speed=swing_speed, hit_speed=hit_speed,
+                            hit_speed=hit_speed, swing_speed=swing_speed,
                             bench_press=bench_press, squat=squat)
 
 @dashboard.route('/dashboard/summary')
@@ -98,7 +98,7 @@ def dashboard_summary():
     records = Record.query.filter_by(coach_approval=True).all()
     # 学年ごとのリスト初期化（すべての項目を含む）
     grade_data = defaultdict(lambda: {'run_50m': [], 'base_running': [], 'long_throw': [],
-                                    'pitch_speed': [], 'swing_speed': [], 'hit_speed': [],
+                                    'pitch_speed': [], 'hit_speed': [], 'swing_speed': [],
                                     'bench_press': [], 'squat': []})
     for r in records:
         grade = r.grade
@@ -106,8 +106,8 @@ def dashboard_summary():
         grade_data[grade]['base_running'].append(r.base_running)
         grade_data[grade]['long_throw'].append(r.long_throw)
         grade_data[grade]['pitch_speed'].append(r.pitch_speed)
-        grade_data[grade]['swing_speed'].append(r.swing_speed)
         grade_data[grade]['hit_speed'].append(r.hit_speed)
+        grade_data[grade]['swing_speed'].append(r.swing_speed)
         grade_data[grade]['bench_press'].append(r.bench_press)
         grade_data[grade]['squat'].append(r.squat)
 
@@ -118,8 +118,8 @@ def dashboard_summary():
             'base_running': round(sum(vals['base_running']) / len(vals['base_running']), 2),
             'long_throw': round(sum(vals['long_throw']) / len(vals['long_throw']), 2),
             'pitch_speed': round(sum(vals['pitch_speed']) / len(vals['pitch_speed']), 2),
-            'swing_speed': round(sum(vals['swing_speed']) / len(vals['swing_speed']), 2),
             'hit_speed': round(sum(vals['hit_speed']) / len(vals['hit_speed']), 2),
+            'swing_speed': round(sum(vals['swing_speed']) / len(vals['swing_speed']), 2),
             'bench_press': round(sum(vals['bench_press']) / len(vals['bench_press']), 2),
             'squat': round(sum(vals['squat']) / len(vals['squat']), 2)}
             for grade, vals in grade_data.items() if len(vals['run_50m']) > 0}
@@ -129,8 +129,8 @@ def dashboard_summary():
     avg_base_running = [grade_avg[g]['base_running'] for g in grades]
     avg_long_throw = [grade_avg[g]['long_throw'] for g in grades]
     avg_pitch_speed = [grade_avg[g]['pitch_speed'] for g in grades]
-    avg_swing = [grade_avg[g]['swing_speed'] for g in grades]
     avg_hit_speed = [grade_avg[g]['hit_speed'] for g in grades]
+    avg_swing = [grade_avg[g]['swing_speed'] for g in grades]
     avg_bench_press = [grade_avg[g]['bench_press'] for g in grades]
     avg_squat = [grade_avg[g]['squat'] for g in grades]
 
@@ -138,7 +138,7 @@ def dashboard_summary():
     return render_template('dashboard/summary.html', grades=grades,
                             avg_run_50m=avg_run_50m, avg_base_running=avg_base_running,
                             avg_long_throw=avg_long_throw, avg_pitch_speed=avg_pitch_speed,
-                            avg_swing=avg_swing, avg_hit_speed=avg_hit_speed,
+                            avg_hit_speed=avg_hit_speed, avg_swing=avg_swing,
                             avg_bench_press=avg_bench_press, avg_squat=avg_squat)
 
 @dashboard.route('/dashboard/ranking')
@@ -183,7 +183,7 @@ def record_profile(user_id):
         return round(sum(values) / len(values), 2) if values else 0
 
     fields = ['run_50m', 'base_running','long_throw', 'pitch_speed',
-            'swing_speed', 'hit_speed','bench_press', 'squat']
+            'hit_speed', 'swing_speed', 'bench_press', 'squat']
 
     data = {'personal': {f: getattr(record, f) for f in fields},
             'team_avg': {f: avg(f) for f in fields}}
