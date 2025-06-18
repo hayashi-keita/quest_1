@@ -3,7 +3,7 @@
 {% block content %}
   <h2 class="mb-4">🧭 レーダーチャート - {{ user.name }} さん</h2>
 
-  <!-- ✅ Chart.js を読み込む -->
+  <!-- ✅ Chart.js 読み込み -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- ✅ JSON データをscriptタグに埋め込む -->
@@ -11,8 +11,8 @@
     {{ data | tojson | safe }}
   </script>
 
-  <!-- ✅ サイズ制御用のコンテナ -->
-  <div class="chart-container" style="width: 600px; height: 600px; margin: auto;">
+  <!-- ✅ サイズ制御 + 下余白を追加 -->
+  <div class="chart-container" style="width: 800px; height: 800px; margin: auto; padding-bottom: 80px;">
     <canvas id="radarChart" style="width:100%; height:100%;"></canvas>
   </div>
 
@@ -27,7 +27,6 @@
         "スイング速度（km）", "打球速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
       ];
 
-      // 視覚的に「小さいほど良い」項目を反転して見せる（100から引く）
       const values = [
         100 - (personal.run_50m || 0),
         100 - (personal.base_running || 0),
@@ -78,16 +77,35 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          aspectRatio: 1,
           scales: {
             r: {
               beginAtZero: true,
-              max: 100
+              min: 0,
+              max: 120,
+              ticks: {
+                display: false
+              },
+              pointLabels: {
+                font: {
+                  size: 16
+                },
+                padding: 16
+              },
+              grid: {
+                circular: true
+              }
             }
           },
           plugins: {
             legend: {
               position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ": " + context.formattedValue;
+                }
+              }
             }
           }
         }
