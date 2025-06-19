@@ -89,5 +89,8 @@
     {% endfor %}
   </tbody>
 </table>
-
+<div class="d-flex flex-column">
+  <a href="{{ url_for('dashboard.show_dashboard') }}" class="mt-2">カテゴリ別グラフ</a>
+  <a href="{{ url_for('dashboard.dashboard_summary') }}" class="mt-2 mb-3">統計グラフ</a>
+</div>
 {% endblock %}

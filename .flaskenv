@@ -1,3 +1,4 @@
-
 FLASK_APP=app.py
 FLASK_ENV=production
+DATABASE_URL=postgresql://flask_db_j2dx_user:az6g4ncUnMPgj6CqbUWQKr8T3bWVffZu@dpg-d18b45euk2gs73fobab0-a.oregon-postgres.render.com/flask_db_j2dx
+SECRET_KEY=5a96b312e3e1f8673499a184b6762274

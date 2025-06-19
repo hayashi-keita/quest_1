@@ -16,7 +16,7 @@ def register_record():
         return redirect(url_for('auth.login'))
 
     form = RecordForm()
-    form.member.choices = [(u.id, u.username) for u in User.query.filter_by(role='member').all()]
+    form.member.choices = [(0, '選択してください')] + [(u.id, u.username) for u in User.query.filter_by(role='member').all()]
 
     if form.validate_on_submit():
         new_record = Record(user_id=form.member.data,

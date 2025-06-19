@@ -93,4 +93,8 @@ new Chart(ctx, {
   }
 });
 </script>
+<div class="d-flex flex-column">
+  <a href="{{ url_for('dashboard.show_dashboard') }}" class="mt-2">カテゴリ別グラフ</a>
+  <a href="{{ url_for('dashboard.ranking') }}" class="mt-2 mb-2">項目別ランキング画面</a>
+</div>
 {% endblock %}

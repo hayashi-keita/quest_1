@@ -3,9 +3,9 @@
 <h2>記録登録</h2>
 <form method="POST" class="mb-5">
     {{ form.hidden_tag() }}
-    <div class="form-group">
+    <div class="form-group mb-3">
         {{ form.member.label }}<br>
-        {{ form.member(class="form-control") }}
+        {{ form.member(class="form-select") }}
     </div>
 
     <div class="mb-3">
@@ -15,7 +15,7 @@
 
     <div class="mb-3">
         {{ form.grade.label(class="form-label") }}
-        {{ form.grade(class="form-control") }}
+        {{ form.grade(class="form-select") }}
     </div>
 
     <div class="mb-3">

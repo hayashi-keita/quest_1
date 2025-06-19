@@ -4,14 +4,14 @@
 <div class="container pb-5">
   <h2 class="mb-4">📈 記録推移 - {{ user.name }} さん</h2>
 
-  <!-- レーダーチャートへのリンク -->
+  <!-- 🔗 レーダーチャートへのリンク -->
   <div class="mb-3">
     <a href="{{ url_for('dashboard.record_profile', user_id=user.id) }}" class="btn btn-outline-primary">
-      📊 レーダーチャートを見る
+      📊 レーダーチャートを見る（最新記録比較）
     </a>
   </div>
 
-  <!-- 種目セレクトボックスと全選択ボタン -->
+  <!-- ✅ 種目セレクトボックスと全選択ボタン -->
   <div class="mb-4">
     <label for="metricSelector" class="form-label">表示する種目を選択：</label>
 
@@ -32,122 +32,122 @@
     </select>
   </div>
 
-  <!-- グラフキャンバス -->
+  <!-- 📉 グラフキャンバス -->
   <canvas id="progressChart" height="120"></canvas>
 </div>
 
-<!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- ✅ Chart.js 読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- JSONデータ埋め込み -->
-  <script id="progress-data" type="application/json">
-    {{ {
-      "dates": dates,
-      "run_50m": run_50m,
-      "base_running": base_running,
-      "long_throw": long_throw,
-      "pitch_speed": pitch_speed,
-      "hit_speed": hit_speed,
-      "swing_speed": swing_speed,
-      "bench_press": bench_press,
-      "squat": squat
-    } | tojson | safe }}
-  </script>
+<!-- ✅ JSON データ埋め込み -->
+<script id="progress-data" type="application/json">
+  {{ {
+    "dates": dates,
+    "run_50m": run_50m,
+    "base_running": base_running,
+    "long_throw": long_throw,
+    "pitch_speed": pitch_speed,
+    "hit_speed": hit_speed,
+    "swing_speed": swing_speed,
+    "bench_press": bench_press,
+    "squat": squat
+  } | tojson | safe }}
+</script>
 
-  <!-- チャート描画スクリプト -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const data = JSON.parse(document.getElementById('progress-data').textContent);
+<!-- ✅ チャート描画スクリプト -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const data = JSON.parse(document.getElementById('progress-data').textContent);
 
-      const metrics = {
-        run_50m:        { label: '50m走（秒）',            data: data.run_50m,       color: 'rgba(255, 99, 132, 1)' },
-        base_running:   { label: 'ベースランニング（秒）', data: data.base_running,  color: 'rgba(75, 192, 192, 1)' },
-        long_throw:     { label: '遠投（m）',               data: data.long_throw,    color: 'rgba(153, 102, 255, 1)' },
-        pitch_speed:    { label: '球速（km/h）',            data: data.pitch_speed,   color: 'rgba(255, 159, 64, 1)' },
-        hit_speed:      { label: '打球速度（km/h）',        data: data.hit_speed,     color: 'rgba(255, 206, 86, 1)' },
-        swing_speed:    { label: 'スイング速度（km/h）',    data: data.swing_speed,   color: 'rgba(54, 162, 235, 1)' },
-        bench_press:    { label: 'ベンチプレス（kg）',       data: data.bench_press,   color: 'rgba(201, 203, 207, 1)' },
-        squat:          { label: 'スクワット（kg）',         data: data.squat,         color: 'rgba(0, 128, 0, 1)' }
-      };
+    const metrics = {
+      run_50m:        { label: '50m走（秒）',            data: data.run_50m,       color: 'rgba(255, 99, 132, 1)' },
+      base_running:   { label: 'ベースランニング（秒）', data: data.base_running,  color: 'rgba(75, 192, 192, 1)' },
+      long_throw:     { label: '遠投（m）',               data: data.long_throw,    color: 'rgba(153, 102, 255, 1)' },
+      pitch_speed:    { label: '球速（km/h）',            data: data.pitch_speed,   color: 'rgba(255, 159, 64, 1)' },
+      hit_speed:      { label: '打球速度（km/h）',        data: data.hit_speed,     color: 'rgba(255, 206, 86, 1)' },
+      swing_speed:    { label: 'スイング速度（km/h）',    data: data.swing_speed,   color: 'rgba(54, 162, 235, 1)' },
+      bench_press:    { label: 'ベンチプレス（kg）',       data: data.bench_press,   color: 'rgba(201, 203, 207, 1)' },
+      squat:          { label: 'スクワット（kg）',         data: data.squat,         color: 'rgba(0, 128, 0, 1)' }
+    };
 
-      const ctx = document.getElementById('progressChart').getContext('2d');
-      let chart = null;
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    let chart = null;
 
-      function renderChart(selectedKeys) {
-        const datasets = selectedKeys.map(key => ({
-          label: metrics[key].label,
-          data: metrics[key].data,
-          borderColor: metrics[key].color,
-          backgroundColor: metrics[key].color.replace('1)', '0.2)'),
-          fill: false,
-          tension: 0.1
-        }));
+    function renderChart(selectedKeys) {
+      const datasets = selectedKeys.map(key => ({
+        label: metrics[key].label,
+        data: metrics[key].data,
+        borderColor: metrics[key].color,
+        backgroundColor: metrics[key].color.replace('1)', '0.2)'),
+        fill: false,
+        tension: 0.1
+      }));
 
-        if (chart) chart.destroy();
+      if (chart) chart.destroy();
 
-        chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: data.dates,
-            datasets: datasets
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.dates,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: '各項目の記録推移（承認済のみ）'
+            },
+            legend: {
+              position: 'top'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
           },
-          options: {
-            responsive: true,
-            plugins: {
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
               title: {
                 display: true,
-                text: '各項目の記録推移（承認済のみ）'
-              },
-              legend: {
-                position: 'top'
-              },
-              tooltip: {
-                mode: 'index',
-                intersect: false
+                text: '測定値'
               }
             },
-            interaction: {
-              mode: 'nearest',
-              axis: 'x',
-              intersect: false
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: '測定値'
-                }
-              },
-              x: {
-                title: {
-                  display: true,
-                  text: '月（YYYY-MM）'
-                }
+            x: {
+              title: {
+                display: true,
+                text: '月（YYYY-MM）'
               }
             }
           }
-        });
-      }
-
-      // 初期描画（全項目表示）
-      renderChart(Object.keys(metrics));
-
-      // セレクト変更イベントで再描画
-      document.getElementById('metricSelector').addEventListener('change', function () {
-        const selected = Array.from(this.selectedOptions).map(opt => opt.value);
-        renderChart(selected);
-      });
-
-      // 全選択ボタンの処理
-      document.getElementById('selectAllBtn').addEventListener('click', function () {
-        const selector = document.getElementById('metricSelector');
-        for (const option of selector.options) {
-          option.selected = true;
         }
-        const selected = Array.from(selector.selectedOptions).map(opt => opt.value);
-        renderChart(selected);
       });
+    }
+
+    // ✅ 初期表示（全選択）
+    renderChart(Object.keys(metrics));
+
+    // ✅ セレクト変更イベント
+    document.getElementById('metricSelector').addEventListener('change', function () {
+      const selected = Array.from(this.selectedOptions).map(opt => opt.value);
+      renderChart(selected);
     });
-  </script>
+
+    // ✅ 全選択ボタン
+    document.getElementById('selectAllBtn').addEventListener('click', function () {
+      const selector = document.getElementById('metricSelector');
+      for (const option of selector.options) {
+        option.selected = true;
+      }
+      const selected = Array.from(selector.selectedOptions).map(opt => opt.value);
+      renderChart(selected);
+    });
+  });
+</script>
 {% endblock %}

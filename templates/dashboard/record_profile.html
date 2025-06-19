@@ -3,15 +3,21 @@
 {% block content %}
   <h2 class="mb-4">🧭 レーダーチャート - {{ user.name }} さん</h2>
 
-  <!-- ✅ Chart.js 読み込み -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- ✅ JSON データをscriptタグに埋め込む -->
+  <!-- ✅ JSON データを script タグに埋め込む -->
   <script id="json-data" type="application/json">
     {{ data | tojson | safe }}
   </script>
 
-  <!-- ✅ サイズ制御 + 下余白を追加 -->
+  <!-- ✅ 平均切替ボタン -->
+  <div class="text-center mb-3">
+    <label><input type="radio" name="avgType" value="team_avg" checked> チーム平均（最新）</label>
+    &nbsp;&nbsp;
+    <label><input type="radio" name="avgType" value="overall_avg"> チーム平均（全期間）</label>
+  </div>
+
+  <!-- ✅ レーダーチャート -->
   <div class="chart-container" style="width: 800px; height: 800px; margin: auto; padding-bottom: 50px;">
     <canvas id="radarChart" style="width:100%; height:100%;"></canvas>
   </div>
@@ -21,56 +27,61 @@
       const rawData = JSON.parse(document.getElementById("json-data").textContent);
       const personal = rawData.personal;
       const teamAvg = rawData.team_avg;
+      const overallAvg = rawData.overall_avg;
+      const gradeAvg = rawData.grade_avg;
 
       const labels = [
         "50m走（秒）", "ベースランニング（秒）", "遠投（m）", "球速（km）",
         "打球速度（km）", "スイング速度（km）", "ベンチプレス（kg）", "スクワット（kg）"
       ];
 
-      const values = [
-        100 - (personal.run_50m || 0),
-        100 - (personal.base_running || 0),
-        personal.long_throw || 0,
-        personal.pitch_speed || 0,
-        personal.hit_speed || 0,
-        personal.swing_speed || 0,
-        personal.bench_press || 0,
-        personal.squat || 0
+      const adjust = val => val === undefined || val === null ? 0 : val;
+      const convert = data => [
+        100 - adjust(data.run_50m),
+        100 - adjust(data.base_running),
+        adjust(data.long_throw),
+        adjust(data.pitch_speed),
+        adjust(data.hit_speed),
+        adjust(data.swing_speed),
+        adjust(data.bench_press),
+        adjust(data.squat)
       ];
 
-      const avgValues = [
-        100 - (teamAvg.run_50m || 0),
-        100 - (teamAvg.base_running || 0),
-        teamAvg.long_throw || 0,
-        teamAvg.pitch_speed || 0,
-        teamAvg.hit_speed || 0,
-        teamAvg.swing_speed || 0,
-        teamAvg.bench_press || 0,
-        teamAvg.squat || 0
-      ];
+      const personalData = convert(personal);
+      const teamAvgData = convert(teamAvg);
+      const overallAvgData = convert(overallAvg);
+      const gradeAvgData = convert(gradeAvg);
 
       const ctx = document.getElementById("radarChart").getContext("2d");
 
-      new Chart(ctx, {
+      let radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
           labels: labels,
           datasets: [
             {
               label: "{{ user.name }}（本人）",
-              data: values,
+              data: personalData,
               fill: true,
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
               pointBackgroundColor: 'rgba(54, 162, 235, 1)'
             },
             {
-              label: "チーム平均",
-              data: avgValues,
+              label: "チーム平均（最新）",
+              data: teamAvgData,
               fill: true,
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
               pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+            },
+            {
+              label: "{{ user.grade }}学年平均 (最新)",
+              data: gradeAvgData,
+              fill: true,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              pointBackgroundColor: 'rgba(75, 192, 192, 1)'
             }
           ]
         },
@@ -82,33 +93,34 @@
               beginAtZero: true,
               min: 0,
               max: 120,
-              ticks: {
-                display: false
-              },
+              ticks: { display: false },
               pointLabels: {
-                font: {
-                  size: 16
-                },
+                font: { size: 16 },
                 padding: 16
               },
-              grid: {
-                circular: true
-              }
+              grid: { circular: true }
             }
           },
           plugins: {
-            legend: {
-              position: 'bottom'
-            },
+            legend: { position: 'bottom' },
             tooltip: {
               callbacks: {
-                label: function(context) {
-                  return context.dataset.label + ": " + context.formattedValue;
-                }
+                label: context => `${context.dataset.label}: ${context.formattedValue}`
               }
             }
           }
         }
+      });
+
+      // ✅ 切替ロジック（全期間平均 / 最新平均）
+      document.querySelectorAll('input[name="avgType"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+          const selected = this.value === 'team_avg' ? teamAvgData : overallAvgData;
+
+          radarChart.data.datasets[1].data = selected;
+          radarChart.data.datasets[1].label = this.value === 'team_avg' ? "チーム平均（最新）" : "チーム平均（全期間）";
+          radarChart.update();
+        });
       });
     });
   </script>

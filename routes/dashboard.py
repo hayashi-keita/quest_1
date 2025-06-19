@@ -166,30 +166,39 @@ def ranking():
                             hit_ranking=hit_ranking,
                             strength_ranking=strength_ranking)
 
+#レーダーチャート
 @dashboard.route('/dashboard/record_profile/<int:user_id>')
 @login_required
 def record_profile(user_id):
     user = User.query.get_or_404(user_id)
     # 最新の承認済の記録を取得
-    record = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.date.asc()).first()
+    record = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.month.desc()).first()
+
     if not record:
         flash('記録が見つかりません。', 'warning')
         return redirect(url_for('dashboard.dashboard_summary'))
 
-    all_records = Record.query.filter_by(coach_approval=True).all()
-    if not all_records:
-        flash('平均値を計算できる記録が存在しません。', 'warning')
-        return redirect(url_for('dashboard.dashboard_summary'))
+    latest_month = record.month
 
-    def avg(field):
-        values = [getattr(r, field) for r in all_records if getattr(r, field) is not None]
+    # 全期間の全体記録
+    all_records = Record.query.filter_by(coach_approval=True,).all()
+    # 最新月の記録を抽出
+    same_month_records = [r for r in all_records if r.month == latest_month]
+    # 最新月・同学年平均全体
+    same_grade_records = [r for r in same_month_records if r.grade == user.grade]
+
+    # 平均値計算
+    def avg(records, field):
+        values = [getattr(r, field) for r in records if getattr(r, field) is not None]
         return round(sum(values) / len(values), 2) if values else 0
 
     fields = ['run_50m', 'base_running','long_throw', 'pitch_speed',
             'hit_speed', 'swing_speed', 'bench_press', 'squat']
 
     data = {'personal': {f: getattr(record, f) for f in fields},
-            'team_avg': {f: avg(f) for f in fields}}
+            'team_avg': {f: avg(same_month_records, f) for f in fields},
+            'grade_avg': {f: avg(same_grade_records, f) for f in fields},
+            'overall_avg': {f: avg(all_records, f) for f in fields}}
 
     return render_template('dashboard/record_profile.html', user=user, data=data)
 
