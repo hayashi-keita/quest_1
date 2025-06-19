@@ -3,7 +3,8 @@
 
 <h2>あなたの記録（承認待ち）</h2>
   {% if records %}
-  <table class="table table-striped table-bordered">
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>日付</th>
@@ -50,6 +51,7 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
   {% else %}
     <p>承認待ちの記録はありません。</p>
   {% endif %}

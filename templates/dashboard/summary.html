@@ -3,9 +3,15 @@
 <h2 class="mb-4">統合ダッシュボード</h2>
 
 <h4>🔢 学年別平均</h4>
-<canvas id="avgChart" height="120"></canvas>
+<!-- 高さ付きラッパー -->
+<div style="width: 100%; max-width: 100%; height: auto;">
+  <canvas id="avgChart" style="max-height: 400px;"></canvas>
+</div>
 
-<!-- JSONデータをテンプレートから渡す -->
+<!-- Chart.js 読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- JSONデータ -->
 <script id="json-data" type="application/json">
 {
   "grades": {{ grades | tojson | safe }},
@@ -22,6 +28,7 @@
 
 <script>
 const data = JSON.parse(document.getElementById('json-data').textContent);
+console.log(data);  // デバッグ用：中身確認
 
 const ctx = document.getElementById('avgChart').getContext('2d');
 new Chart(ctx, {
@@ -73,26 +80,24 @@ new Chart(ctx, {
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
         text: '学年別平均（全項目）',
-        font: {
-          size: 18
-        }
+        font: { size: 18 }
       },
       legend: {
         position: 'top'
       }
     },
     scales: {
-      y: {
-        beginAtZero: true
-      }
+      y: { beginAtZero: true }
     }
   }
 });
 </script>
+
 <div class="d-flex flex-column">
   <a href="{{ url_for('dashboard.show_dashboard') }}" class="mt-2">カテゴリ別グラフ</a>
   <a href="{{ url_for('dashboard.ranking') }}" class="mt-2 mb-2">項目別ランキング画面</a>

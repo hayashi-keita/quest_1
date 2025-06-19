@@ -3,22 +3,41 @@
 {% block content %}
   <h2 class="mb-4">🧭 レーダーチャート - {{ user.name }} さん</h2>
 
+  <style>
+    .chart-container {
+      width: 100%;
+      max-width: 800px;
+      height: 80vw;         /* 画面幅の80% */
+      max-height: 800px;
+      margin: auto;
+      overflow-x: auto;     /* 横スクロールはスマホ向けに有効 */
+    }
+    @media (min-width: 992px) {
+      /* PCなど幅広い画面では固定サイズ */
+      .chart-container {
+        width: 800px;
+        height: 800px;
+        overflow-x: visible; /* 横スクロールは解除 */
+      }
+    }
+  </style>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- ✅ JSON データを script タグに埋め込む -->
+  <!-- JSONデータをscriptタグに埋め込み -->
   <script id="json-data" type="application/json">
     {{ data | tojson | safe }}
   </script>
 
-  <!-- ✅ 平均切替ボタン -->
+  <!-- 平均切替ボタン -->
   <div class="text-center mb-3">
     <label><input type="radio" name="avgType" value="team_avg" checked> チーム平均（最新）</label>
     &nbsp;&nbsp;
     <label><input type="radio" name="avgType" value="overall_avg"> チーム平均（全期間）</label>
   </div>
 
-  <!-- ✅ レーダーチャート -->
-  <div class="chart-container" style="width: 800px; height: 800px; margin: auto; padding-bottom: 50px;">
+  <!-- レーダーチャート -->
+  <div class="chart-container mb-2">
     <canvas id="radarChart" style="width:100%; height:100%;"></canvas>
   </div>
 
@@ -112,7 +131,7 @@
         }
       });
 
-      // ✅ 切替ロジック（全期間平均 / 最新平均）
+      // 平均切替ラジオボタンの処理
       document.querySelectorAll('input[name="avgType"]').forEach(radio => {
         radio.addEventListener('change', function () {
           const selected = this.value === 'team_avg' ? teamAvgData : overallAvgData;
