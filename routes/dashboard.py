@@ -171,21 +171,32 @@ def ranking():
 @login_required
 def record_profile(user_id):
     user = User.query.get_or_404(user_id)
-    # 最新の承認済の記録を取得
-    record = Record.query.filter_by(user_id=user_id, coach_approval=True).order_by(Record.month.desc()).first()
+    user_grade = user.grade
+    # ▼ 1. 所属学年の中で最新の月を取得（承認済のみ）
+    latest_month_row = db.session.query(Record.month).filter_by(coach_approval=True, grade=user_grade)\
+                        .order_by(Record.month.desc()).first()
 
-    if not record:
+    if not latest_month_row:
         flash('記録が見つかりません。', 'warning')
         return redirect(url_for('dashboard.dashboard_summary'))
 
-    latest_month = record.month
+    latest_month = latest_month_row[0]
+    # ▼ 2. 個人の最新月の記録（承認済）
+    record = Record.query.filter_by(user_id=user_id, coach_approval=True, month=latest_month).first()
 
+    if not record:
+        flash('最新月に本人の記録が存在しません。', 'warning')
+        return redirect(url_for('dashboard.dashboard_summary'))
+
+    # ▼ 3. データ取得（最新月 & 全期間）
     # 全期間の全体記録
     all_records = Record.query.filter_by(coach_approval=True,).all()
     # 最新月の記録を抽出
-    same_month_records = [r for r in all_records if r.month == latest_month]
+    same_month_records = Record.query.filter_by(coach_approval=True, month=latest_month).all()
     # 最新月・同学年平均全体
-    same_grade_records = [r for r in same_month_records if r.grade == user.grade]
+    same_grade_records = [r for r in same_month_records if str(r.grade).strip() == str(user.grade).strip()]
+    # 同学年全期間平均
+    same_grade_all = [r for r in all_records if str(r.grade).strip() == str(user.grade).strip()]
 
     # 平均値計算
     def avg(records, field):
@@ -197,8 +208,9 @@ def record_profile(user_id):
 
     data = {'personal': {f: getattr(record, f) for f in fields},
             'team_avg': {f: avg(same_month_records, f) for f in fields},
+            'team_avg_all': {f: avg(all_records, f) for f in fields},
             'grade_avg': {f: avg(same_grade_records, f) for f in fields},
-            'overall_avg': {f: avg(all_records, f) for f in fields}}
+            'grade_avg_all': {f: avg(same_grade_all, f) for f in fields }}
 
     return render_template('dashboard/record_profile.html', user=user, data=data)
 

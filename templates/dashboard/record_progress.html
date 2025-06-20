@@ -144,23 +144,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- スタイル -->
 <style>
   .chart-container {
     width: 100%;
-    height: 400px;
+    max-width: 1000px;
+    height: 500px;
     margin-left: auto;
     margin-right: auto;
   }
 
-  /* canvasタグに強制的に親のサイズを適用 */
   #progressChart {
     width: 100% !important;
     height: 100% !important;
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
     .chart-container {
-      height: 300px;
+      height: 350px;
     }
 
     select[multiple] {

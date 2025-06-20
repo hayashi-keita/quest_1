@@ -7,24 +7,22 @@
     .chart-container {
       width: 100%;
       max-width: 800px;
-      height: 80vw;         /* 画面幅の80% */
+      height: 80vw;
       max-height: 800px;
       margin: auto;
-      overflow-x: auto;     /* 横スクロールはスマホ向けに有効 */
+      overflow-x: auto;
     }
     @media (min-width: 992px) {
-      /* PCなど幅広い画面では固定サイズ */
       .chart-container {
         width: 800px;
         height: 800px;
-        overflow-x: visible; /* 横スクロールは解除 */
+        overflow-x: visible;
       }
     }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- JSONデータをscriptタグに埋め込み -->
   <script id="json-data" type="application/json">
     {{ data | tojson | safe }}
   </script>
@@ -33,10 +31,13 @@
   <div class="text-center mb-3">
     <label><input type="radio" name="avgType" value="team_avg" checked> チーム平均（最新）</label>
     &nbsp;&nbsp;
-    <label><input type="radio" name="avgType" value="overall_avg"> チーム平均（全期間）</label>
+    <label><input type="radio" name="avgType" value="team_avg_all"> チーム平均（全期間）</label>
+    &nbsp;&nbsp;
+    <label><input type="radio" name="avgType" value="grade_avg"> 学年平均（最新）</label>
+    &nbsp;&nbsp;
+    <label><input type="radio" name="avgType" value="grade_avg_all"> 学年平均（全期間）</label>
   </div>
 
-  <!-- レーダーチャート -->
   <div class="chart-container mb-2">
     <canvas id="radarChart" style="width:100%; height:100%;"></canvas>
   </div>
@@ -46,8 +47,9 @@
       const rawData = JSON.parse(document.getElementById("json-data").textContent);
       const personal = rawData.personal;
       const teamAvg = rawData.team_avg;
-      const overallAvg = rawData.overall_avg;
+      const teamAvgAll = rawData.team_avg_all;
       const gradeAvg = rawData.grade_avg;
+      const gradeAvgAll = rawData.grade_avg_all;
 
       const labels = [
         "50m走（秒）", "ベースランニング（秒）", "遠投（m）", "球速（km）",
@@ -68,8 +70,9 @@
 
       const personalData = convert(personal);
       const teamAvgData = convert(teamAvg);
-      const overallAvgData = convert(overallAvg);
+      const teamAvgAllData = convert(teamAvgAll);
       const gradeAvgData = convert(gradeAvg);
+      const gradeAvgAllData = convert(gradeAvgAll);
 
       const ctx = document.getElementById("radarChart").getContext("2d");
 
@@ -95,7 +98,7 @@
               pointBackgroundColor: 'rgba(255, 99, 132, 1)'
             },
             {
-              label: "{{ user.grade }}学年平均 (最新)",
+              label: "{{ user.grade }}学年平均（最新）",
               data: gradeAvgData,
               fill: true,
               backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -131,13 +134,21 @@
         }
       });
 
-      // 平均切替ラジオボタンの処理
+      // 切替処理（チーム平均・学年平均両方対応）
       document.querySelectorAll('input[name="avgType"]').forEach(radio => {
         radio.addEventListener('change', function () {
-          const selected = this.value === 'team_avg' ? teamAvgData : overallAvgData;
+          const value = this.value;
 
-          radarChart.data.datasets[1].data = selected;
-          radarChart.data.datasets[1].label = this.value === 'team_avg' ? "チーム平均（最新）" : "チーム平均（全期間）";
+          if (value === 'team_avg' || value === 'team_avg_all') {
+            radarChart.data.datasets[1].data = value === 'team_avg' ? teamAvgData : teamAvgAllData;
+            radarChart.data.datasets[1].label = value === 'team_avg' ? "チーム平均（最新）" : "チーム平均（全期間）";
+          }
+
+          if (value === 'grade_avg' || value === 'grade_avg_all') {
+            radarChart.data.datasets[2].data = value === 'grade_avg' ? gradeAvgData : gradeAvgAllData;
+            radarChart.data.datasets[2].label = value === 'grade_avg' ? "{{ user.grade }}学年平均（最新）" : "{{ user.grade }}学年平均（全期間）";
+          }
+
           radarChart.update();
         });
       });
